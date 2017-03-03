@@ -1,8 +1,5 @@
 package test;
 
-import unalcol.agents.Action;
-import unalcol.agents.AgentProgram;
-import unalcol.agents.Percept;
 import unalcol.agents.examples.labyrinth.teseo.simple.SimpleTeseoAgentProgram;
 import unalcol.agents.simulate.util.SimpleLanguage;
 
