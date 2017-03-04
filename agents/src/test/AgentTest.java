@@ -52,7 +52,6 @@ public class AgentTest extends SimpleTeseoAgentProgram{
 		} else {
 			k = -1;
 		}
-		
 		return k;
 	}
 
