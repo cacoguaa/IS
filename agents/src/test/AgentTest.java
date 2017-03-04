@@ -11,57 +11,66 @@ public class AgentTest extends SimpleTeseoAgentProgram {
 
 	@Override
 	public int accion(boolean PF, boolean PD, boolean PA, boolean PI, boolean MT, boolean FAIL) {
-		// TODO Auto-generated method stub
+
 		if (MT)
 			return -1;
 		int f;
-		int k;
-		if (!PF && !PA && !PI && !PD) {
-			k = (int) (Math.random() * 4);
-		} else if (!PF && !PA && PI && PD) {
+		int k = 0;
+		if( PF && PD && PA && PI){ //Encerrado
+			k = -1;
+		} else if ( !PF && PD && PA && PI){ //Solo Pared Alfrente
 			k = 0;
-		} else if (PF && !PA && PI && !PD) {
+		} else if ( PF && !PD && PA && PI){ //Solo Pared Derecha
 			k = 1;
-		} else if (PF && !PA && !PI && PD) {
-			k = 3;
-		} else if ((!PF && !PA && PI && !PD) || (!PF && PA && PI && !PD)) {
-			f = (int) (Math.random() * 2);
-			if (f == 0) {
-				k = 0;
-			} else {
-				k = 1;
-			}
-		} else if ((!PF && !PA && !PI && PD) || (!PF && PA && !PI && PD)) {
-			f = (int) (Math.random() * 2);
-			if (f == 0) {
-				k = 0;
-			} else {
-				k = 3;
-			}
-		} else if (PF && !PA && PI && PD) {
+		} else if ( PF && PD && !PA && PI){ //Solo Pared Abajo
 			k = 2;
-		} else if (PF && !PA && !PI && !PD) {
-			k = (int) (Math.random() * 3 + 1);
-		} else if (PF && PA && !PI && !PD) {
-			f = (int) (Math.random() * 2);
-			if (f == 0) {
+		} else if ( PF && PD && PA && !PI){ //Solo Pared Izquierda
+			k = 3;
+		} else if ( PF && !PD && PA && !PI){ //Pared Alfrente Pared Atras
+			f = (int)(Math.random()*3);
+			if( f == 0 ){
 				k = 1;
 			} else {
 				k = 3;
 			}
-		} else if (!PF && PA && !PI && !PD) {
-			f = (int) (Math.random() * 3);
-			if (f == 0) {
+		} else if ( (!PF && PD && !PA && PI) 	//Pared Izquierda Pared Derecha
+				|| (!PF && PD && PA && !PI) 	//Pared Derecha Pared Atras
+				|| (!PF && !PD && PA && PI) ){ 	//Pared Izquierda Pared Atras
+			k = 0;
+		} else if ( PF && !PD && !PA && !PI){ //Pared Alfrente 3 abiertas
+			k = (int)(Math.random()*3) + 1;
+		} else if ( !PF && !PD && PA && !PI){ //Pared Atras 3 abiertas
+			f = (int)(Math.random()*3);
+			if( f == 0 ){
 				k = 0;
-			} else if (f == 1) {
+			} else if (f == 1){
 				k = 1;
+			} else {
+				k = 1;
+			}
+		} else if ( !PF && !PD && !PA && !PI){ //4 abiertas
+			k = (int)(Math.random()*4);
+		} else if ( !PF && PD && !PA && !PI){ //Pared Derecha 3 abiertas
+			f = (int)(Math.random()*2);
+			if( f == 0 ){
+				k = 0;
 			} else {
 				k = 3;
 			}
+		} else if ( !PF && !PD && !PA && PI){ //Pared Izquierda 3 abiertas
+			f = (int)(Math.random()*2);
+			if( f == 0 ){
+				k = 0;
+			} else {
+				k = 1;
+			}
+		} else if ( PF && PD && !PA && !PI){ //Pared Alfrente y Derecha
+			k = 3;
+		} else if ( PF && !PD && !PA && PI){ //Pared Alfrente y Izquierda
+			k = 1;
 		} else {
 			k = -1;
-			
-		}
+		} 
 		return k;
 	}
 
