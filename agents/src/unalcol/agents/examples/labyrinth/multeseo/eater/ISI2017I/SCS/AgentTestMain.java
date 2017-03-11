@@ -1,4 +1,4 @@
-package test;
+package unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS;
 
 import unalcol.agents.Agent;
 import unalcol.agents.AgentProgram;
@@ -21,8 +21,12 @@ public class AgentTestMain {
 	     AgentProgram[] teseo = new AgentProgram[12];
 	    int index1 = 0;
 	    int index2 = 1;
+	    /*
 	    teseo[index1] = new AgentTest( getLanguage() );
 	    teseo[index2] = new AgentTest( getLanguage() );
+	    */
+	    teseo[index1] = new SimpleAgentSCS( getLanguage() );
+	    teseo[index2] = new SimpleAgentSCS( getLanguage() );
 	    
 	    LabyrinthDrawer.DRAW_AREA_SIZE = 600;
 	    LabyrinthDrawer.CELL_SIZE = 40;

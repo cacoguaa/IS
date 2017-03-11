@@ -1,4 +1,4 @@
-package test;
+package unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS;
 
 import unalcol.agents.examples.labyrinth.teseo.simple.SimpleTeseoAgentProgram;
 import unalcol.agents.simulate.util.SimpleLanguage;
@@ -8,7 +8,6 @@ public class AgentTest extends SimpleTeseoAgentProgram {
 	public AgentTest(SimpleLanguage _language) {
 		super(_language);
 	}
-
 	@Override
 	public int accion(boolean PF, boolean PD, boolean PA, boolean PI, boolean MT, boolean FAIL) {
 
@@ -18,13 +17,13 @@ public class AgentTest extends SimpleTeseoAgentProgram {
 		int k = 0;
 		if( PF && PD && PA && PI){ //Encerrado
 			k = -1;
-		} else if ( !PF && PD && PA && PI){ //Solo Pared Alfrente
+		} else if ( !PF && PD && PA && PI){ //Sin Pared Alfrente
 			k = 0;
-		} else if ( PF && !PD && PA && PI){ //Solo Pared Derecha
+		} else if ( PF && !PD && PA && PI){ //Sin Pared Derecha
 			k = 1;
-		} else if ( PF && PD && !PA && PI){ //Solo Pared Abajo
+		} else if ( PF && PD && !PA && PI){ //Sin Pared Abajo
 			k = 2;
-		} else if ( PF && PD && PA && !PI){ //Solo Pared Izquierda
+		} else if ( PF && PD && PA && !PI){ //Sin Pared Izquierda
 			k = 3;
 		} else if ( PF && !PD && PA && !PI){ //Pared Alfrente Pared Atras
 			f = (int)(Math.random()*3);
