@@ -11,7 +11,7 @@ import java.io.FileWriter;
 import unalcol.agents.simulate.gui.*;
 
 public class Labyrinth extends Environment{
-    public static int DEFAULT_SIZE = 20;
+  public static int DEFAULT_SIZE = 20;
   protected static final int F = 1<<0;
   protected static final int R = 1<<1;
   protected static final int B = 1<<2;
