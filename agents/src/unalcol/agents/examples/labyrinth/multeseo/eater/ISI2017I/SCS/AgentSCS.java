@@ -60,6 +60,7 @@ public abstract class AgentSCS implements AgentProgram {
 			if (0 <= d && d < 4) {
 				for (int i = 1; i <= d; i++) {
 					cmd.add(language.getAction(3)); // rotate
+//					redPasos();
 				}
 				cmd.add(language.getAction(2)); // advance
 			} else {
@@ -70,6 +71,8 @@ public abstract class AgentSCS implements AgentProgram {
 		cmd.remove(0);
 		return new Action(x);
 	}
+	
+//	public abstract void redPasos();
 	
 	//Action method 
 	public abstract int accion(
