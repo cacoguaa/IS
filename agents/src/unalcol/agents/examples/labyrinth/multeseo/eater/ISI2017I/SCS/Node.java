@@ -9,14 +9,12 @@ public class Node {
 	//ArrayList<Node> children;
 	int[] pos; 
 	
-	public Node(int x, int y, int head, Node parent) {
+	public Node(int x, int y, int cont) {
 		visited = false;
 		//children = new ArrayList<>();
-		this.parent = parent;
+		parent = null;
 		pos = new int[3];
-		pos[0] = x;
-		pos[1] = y;
-		pos[2] = head;
+		pos[0] = x; pos[1] = y; pos[2] = cont;
 	}
 
 	public Node getParent() {
