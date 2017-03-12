@@ -26,7 +26,7 @@ public class AgentTestMain {
 	    teseo[index1] = new AgentTest( getLanguage() );
 	    teseo[index2] = new AgentTest( getLanguage() );
 	    */
-	    teseo[index1] = new SimpleAgentSCS( getLanguage() );
+	    teseo[index1] = new SimpleAgentCarlos( getLanguage() );
 	    //teseo[index2] = new SimpleAgentSCS( getLanguage() );
 	    
 	    LabyrinthDrawer.DRAW_AREA_SIZE = 600;

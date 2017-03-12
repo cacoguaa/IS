@@ -12,7 +12,8 @@ public class SimpleAgentSCS extends AgentSCS{
 	private Stack<Node> nodes;
 	private ArrayList<Short> states;
 	private int head;
-	
+	private int x;
+	private int y;	
 	
 	public SimpleAgentSCS(SimpleLanguage _lenguage){
 		super( _lenguage);
@@ -24,32 +25,51 @@ public class SimpleAgentSCS extends AgentSCS{
 		Short state = 0;
 		states.add(state);
 	};
-	
-	public boolean createState (int x,  int y, int  head){
-		return  true;
-	}
-	
-	public void createChild(int k,boolean[] walls, Node parent){
 		
-		Node child;
+	public void createChild(boolean[] walls, Node parent){	
 		for(int i=0; i<4; i++){
 			if(!walls[i]){
-				switch(i){
-					case 0:
-						break;
-					case 1:
-						break;
-					case 2:
-						break;
-					case 3:
-						break;
-					default:
-						break;
+				switch (i) {
+				case 0:
+					createState( 0 );
+					break;
+				case 1:
+					createState( 1 );
+					break;
+				case 2:
+					createState( 2 );
+					break;
+				case 3:
+					createState( 3 );
+					break;
 				}
 			}
 		}
 	}
 	
+	public void createState(int caso) {
+		Node child = null;
+		int rot = (caso + head)%4;
+		switch (rot) {
+		case 0:
+			y+=1;
+			child = new Node(x,y,head);
+			break;
+		case 1:
+			x+=1;
+			child = new Node(x,y,head);
+			break;
+		case 2:
+			y-=1;
+			child = new Node(x,y,head);
+			break;
+		case 3:
+			x-=1;
+			child = new Node(x,y,head);
+			break;
+		}
+		nodes.add(child);
+	}
 	@Override
 	public int accion(
 			boolean PF, boolean PD, boolean PA, boolean PI,	//Moves
@@ -122,9 +142,10 @@ public class SimpleAgentSCS extends AgentSCS{
 			k = -1;
 		}
 		head = (head+k)%4;
-		createChild(k,walls,node);
+		createChild(walls,node);
 		//System.out.println("Head:  " + head);
 		//System.out.println(node.pos[0] + " " + node.pos[1]);
+		System.out.println("x: " + x +"y: " + y);
 		return k;
 	}
 
