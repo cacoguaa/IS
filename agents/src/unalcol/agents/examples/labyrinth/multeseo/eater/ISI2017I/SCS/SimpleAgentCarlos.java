@@ -36,29 +36,48 @@ public class SimpleAgentCarlos extends AgentSCS {
 	public int accion(boolean PF, boolean PD, boolean PA, boolean PI, // Moves
 			boolean MT, boolean FAIL // Finish, Die
 	) {
+		System.out.println("-------------------------------");
 		if(!nodes.isEmpty()){
 			boolean[] walls = new boolean[]{PF,PD,PA,PI};
 			Node actual = nodes.pop();
-			posX = actual.pos[0];
-			posY = actual.pos[1];
-			if( createChildren( walls, actual ) ){
-				int k = -1;
-				int movX = -1, movY = -1;
-				movX = (nodes.peek().pos[0] - posX);
-				movY = (nodes.peek().pos[1] - posY);
-				return movement(movX, movY);
-			} else return -1;
+			for(Node n : nodes){
+				System.out.println("Pos X: " + n.pos[0] + " Pos Y: " + n.pos[1]);
+			}
+			//Existe un camino consecutivo
+			if( Math.abs(posX - actual.pos[0]) < 2 
+				|| Math.abs(posY - actual.pos[1]) < 2){
+				posX = actual.pos[0];
+				posY = actual.pos[1];
+				System.out.println("X: " + posX + " Y: " + posY);
+				System.out.println(states);
+				if( createChildren( walls, actual ) ){
+					int k = -1;
+					int movX = -1, movY = -1;
+					movX = (nodes.peek().pos[0] - posX);
+					movY = (nodes.peek().pos[1] - posY);
+					System.out.println("peekX: " + nodes.peek().pos[0] + " peekY: " +nodes.peek().pos[1]);
+					System.out.println("movX: " + movX + " movY: " +movY);
+					return movement(movX, movY);
+				} else return -1;
+			} else {
+			//Existe un camino lejano
+				searchPath( actual.pos[0], actual.pos[1]);
+				return -1;
+			}
+
 		} else {
 			return -1;
 		}
 	}
 	
-	public int movement(int movX, int movY){
+	public void searchPath(int objX, int objY){
+		
+	}
+	public int movement(int movX, int movY) {
 		int k = -1;
-		System.out.print("movX: " + movX + " movY: " + movY );
-		//Move in +X
-		if( movX == 1){
-			switch( head ){
+		// Move in +X
+		if (movX == 1) {
+			switch (head) {
 			case 0:
 				k = 1;
 				break;
@@ -73,9 +92,9 @@ public class SimpleAgentCarlos extends AgentSCS {
 				break;
 			}
 		}
-		//Move in -X
-		if( movX == -1){
-			switch( head ){
+		// Move in -X
+		if (movX == -1) {
+			switch (head) {
 			case 0:
 				k = 3;
 				break;
@@ -90,10 +109,10 @@ public class SimpleAgentCarlos extends AgentSCS {
 				break;
 			}
 		}
-		
-		//Move in +Y
-		if( movY == 1){
-			switch( head ){
+
+		// Move in +Y
+		if (movY == 1) {
+			switch (head) {
 			case 0:
 				k = 0;
 				break;
@@ -108,10 +127,10 @@ public class SimpleAgentCarlos extends AgentSCS {
 				break;
 			}
 		}
-		
-		//Move in -Y		
-		if( movY == -1){
-			switch( head ){
+
+		// Move in -Y
+		if (movY == -1) {
+			switch (head) {
 			case 0:
 				k = 2;
 				break;
@@ -126,34 +145,15 @@ public class SimpleAgentCarlos extends AgentSCS {
 				break;
 			}
 		}
-	
-		System.out.println( " lm: " + lastMov);
-		head = (head+k)%4;
+
+		head = (head + k) % 4;
 		return k;
 	}
 	
-	public void setPosition(){
-		switch( head ){
-		case 0:
-			posY += 1;
-			break;
-		case 1:
-			posX += 1;
-			break;
-		case 2:
-			posY -= 1;
-			break;
-		case 3:
-			posX -= 1;
-			break;
-		}
-		System.out.println("position change to X:" + posX + " Y: " + posY);
-	};
-	
-	public void setHead(int k){
-		head = (head + k) % 4;
-		System.out.println("head: " + head + " k " + k);
-	};
+	public int searchOtherPath( int movX, int movY){
+		return -1;
+	}
+
 	public boolean createChildren(boolean[] walls, Node actual) {
 		int nChilds = 0;
 		boolean success = false;
