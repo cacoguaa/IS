@@ -7,29 +7,26 @@ import unalcol.agents.simulate.util.SimpleLanguage;
 
 public class SimpleAgentCarlos extends AgentSCS {
 	private Stack<Node> nodes;
+	private Stack<Node> parents;
 	private ArrayList<Integer> states;
 	private int head;
 	private int posX;
 	private int posY;
-	private int cn;
-	private int mov;
-	private int lastMov;
+	
 	public SimpleAgentCarlos(SimpleLanguage _lenguage) {
 		super(_lenguage);
 		//initialize all
 		nodes = new Stack<>();
+		parents = new Stack<>();
 		states = new ArrayList<>();
 		head = 0;
 		posX = 0;
 		posY = 0;
 		
-		//Ayuda para verificar movimiento
-		cn = 7;
 		//Create root node
-		Node root =new Node(posX,posY,head);
+		Node root =new Node(posX,posY,null);
 		nodes.add(root);
 		states.add(0);
-		lastMov = 0;
 	};
 
 	@Override
@@ -48,20 +45,21 @@ public class SimpleAgentCarlos extends AgentSCS {
 				|| Math.abs(posY - actual.pos[1]) < 2){
 				posX = actual.pos[0];
 				posY = actual.pos[1];
+				
 				System.out.println("X: " + posX + " Y: " + posY);
 				System.out.println(states);
 				if( createChildren( walls, actual ) ){
-					int k = -1;
+					parents.add(actual);
 					int movX = -1, movY = -1;
 					movX = (nodes.peek().pos[0] - posX);
 					movY = (nodes.peek().pos[1] - posY);
 					System.out.println("peekX: " + nodes.peek().pos[0] + " peekY: " +nodes.peek().pos[1]);
 					System.out.println("movX: " + movX + " movY: " +movY);
-					return movement(movX, movY);
+					return movement(movX, movY); //k
 				} else return -1;
 			} else {
 			//Existe un camino lejano
-				searchPath( actual.pos[0], actual.pos[1]);
+				searchPath( actual );
 				return -1;
 			}
 
@@ -70,11 +68,22 @@ public class SimpleAgentCarlos extends AgentSCS {
 		}
 	}
 	
-	public void searchPath(int objX, int objY){
-		
+	public void searchPath(Node objetive){
+		boolean found = false;
+		int cnt = 0;
+		Node parent = objetive.parent; //Busca apartir del padre del nodo objetivo
+		for( Node child: parent.childs){
+			System.out.println(child.pos[0] +" "+ child.pos[1]);
+		}
+		while( !found ){
+			//TODO busqueda del camino de regreso
+		}
+		System.out.println(cnt);
 	}
+	
 	public int movement(int movX, int movY) {
 		int k = -1;
+		
 		// Move in +X
 		if (movX == 1) {
 			switch (head) {
@@ -127,7 +136,6 @@ public class SimpleAgentCarlos extends AgentSCS {
 				break;
 			}
 		}
-
 		// Move in -Y
 		if (movY == -1) {
 			switch (head) {
@@ -148,10 +156,6 @@ public class SimpleAgentCarlos extends AgentSCS {
 
 		head = (head + k) % 4;
 		return k;
-	}
-	
-	public int searchOtherPath( int movX, int movY){
-		return -1;
 	}
 
 	public boolean createChildren(boolean[] walls, Node actual) {
@@ -203,9 +207,10 @@ public class SimpleAgentCarlos extends AgentSCS {
 		}
 		//Verify if the position isn't visited yet
 		if ( states.indexOf( state ) == -1 ){
-			Node child = new Node(newX,newY,head);
+			Node child = new Node(newX,newY, node);
 			nodes.add(child);
 			states.add(state);
+			node.childs.add(child);
 			success = 1;
 		}	
 		

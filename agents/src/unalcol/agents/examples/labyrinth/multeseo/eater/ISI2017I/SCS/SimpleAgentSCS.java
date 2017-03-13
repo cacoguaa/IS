@@ -18,7 +18,7 @@ public class SimpleAgentSCS extends AgentSCS{
 	public SimpleAgentSCS(SimpleLanguage _lenguage){
 		super( _lenguage);
 		nodes = new Stack<>();
-		Node node = new Node(0,0,0);
+		Node node = new Node(0,0,null);
 		nodes.add(node);
 		head = 0;
 		states = new ArrayList<>();
@@ -53,19 +53,19 @@ public class SimpleAgentSCS extends AgentSCS{
 		switch (rot) {
 		case 0:
 			y+=1;
-			child = new Node(x,y,head);
+			child = new Node(x,y,null);
 			break;
 		case 1:
 			x+=1;
-			child = new Node(x,y,head);
+			child = new Node(x,y,null);
 			break;
 		case 2:
 			y-=1;
-			child = new Node(x,y,head);
+			child = new Node(x,y,null);
 			break;
 		case 3:
 			x-=1;
-			child = new Node(x,y,head);
+			child = new Node(x,y,null);
 			break;
 		}
 		nodes.add(child);

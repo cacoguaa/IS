@@ -6,15 +6,15 @@ public class Node {
 
 	Node parent;
 	boolean visited;
-	//ArrayList<Node> children;
 	int[] pos; 
-	
-	public Node(int x, int y, int cont) {
+	ArrayList<Node> childs;
+
+	public Node(int x, int y, Node parent) {
 		visited = false;
-		//children = new ArrayList<>();
-		parent = null;
-		pos = new int[3];
-		pos[0] = x; pos[1] = y; pos[2] = cont;
+		this.parent = parent;		
+		pos = new int[2];
+		pos[0] = x; pos[1] = y;
+		childs = new ArrayList<Node>();
 	}
 
 	public Node getParent() {
