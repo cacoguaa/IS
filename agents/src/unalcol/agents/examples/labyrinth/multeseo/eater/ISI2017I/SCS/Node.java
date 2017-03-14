@@ -8,6 +8,7 @@ public class Node {
 	boolean visited;
 	int[] pos; 
 	ArrayList<Node> childs;
+	int state;
 
 	public Node(int x, int y, Node parent) {
 		visited = false;
