@@ -3,9 +3,9 @@ package unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS;
 import unalcol.agents.examples.labyrinth.teseo.simple.SimpleTeseoAgentProgram;
 import unalcol.agents.simulate.util.SimpleLanguage;
 
-public class AgentTest extends SimpleTeseoAgentProgram {
+public class RandomAgentSCS extends SimpleTeseoAgentProgram {
 
-	public AgentTest(SimpleLanguage _language) {
+	public RandomAgentSCS(SimpleLanguage _language) {
 		super(_language);
 	}
 	@Override

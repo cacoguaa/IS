@@ -9,13 +9,14 @@ public class Node {
 	int[] pos; 
 	ArrayList<Node> childs;
 	int state;
-
-	public Node(int x, int y, Node parent) {
+	short depth;
+	public Node(int x, int y, Node parent, int depth) {
 		visited = false;
 		this.parent = parent;		
 		pos = new int[2];
 		pos[0] = x; pos[1] = y;
 		childs = new ArrayList<Node>();
+		this.depth = (short)depth;
 	}
 
 	public Node getParent() {
