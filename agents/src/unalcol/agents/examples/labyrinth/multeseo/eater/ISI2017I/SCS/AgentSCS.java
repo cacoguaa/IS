@@ -41,7 +41,7 @@ public abstract class AgentSCS implements AgentProgram {
 			boolean MT = ((Boolean) p.getAttribute(language.getPercept(4))).booleanValue();
 			boolean FAIL = ((Boolean) p.getAttribute(language.getPercept(5))).booleanValue();
 			
-			/*
+			
 			//Agents
 			boolean AF = ((Boolean) p.getAttribute(language.getPercept(6))).booleanValue();
 			boolean AD = ((Boolean) p.getAttribute(language.getPercept(7))).booleanValue();
@@ -50,17 +50,28 @@ public abstract class AgentSCS implements AgentProgram {
 			
 			//Resources
 			boolean RE = ((Boolean) p.getAttribute(language.getPercept(10))).booleanValue();
-			boolean RC = ((Boolean) p.getAttribute(language.getPercept(11))).booleanValue();
-			boolean RSh = ((Boolean) p.getAttribute(language.getPercept(12))).booleanValue();
-			boolean RS = ((Boolean) p.getAttribute(language.getPercept(13))).booleanValue();
-			boolean RW = ((Boolean) p.getAttribute(language.getPercept(14))).booleanValue();
-			*/
+			boolean RC = false;
+			boolean RSh = false;
+			boolean RS = false;
+			boolean RW = false;
+			if( RE ){
+			RC = ((Boolean) p.getAttribute(language.getPercept(11))).booleanValue();
+			RSh = ((Boolean) p.getAttribute(language.getPercept(12))).booleanValue();
+			RS = ((Boolean) p.getAttribute(language.getPercept(13))).booleanValue();
+			RW = ((Boolean) p.getAttribute(language.getPercept(14))).booleanValue();
+			}
 			//int d = accion(PF, PD, PA, PI, MT, FAIL, AF, AD, AA, AI, RE, RC, RSh, RS, RW);
-			int d = accion(PF, PD, PA, PI, MT, FAIL);
+			
+			int d = accion(
+					PF, PD, PA, PI,
+					MT, FAIL,
+					AF, AD, AA, AI,
+					RE, RC, RSh,RS,RW
+					);
+			
 			if (0 <= d && d < 4) {
 				for (int i = 1; i <= d; i++) {
 					cmd.add(language.getAction(3)); // rotate
-//					redPasos();
 				}
 				cmd.add(language.getAction(2)); // advance
 			} else {
@@ -77,9 +88,9 @@ public abstract class AgentSCS implements AgentProgram {
 	//Action method 
 	public abstract int accion(
 			boolean PF, boolean PD, boolean PA, boolean PI, 			//Moves
-			boolean MT, boolean FAIL									//Finish, Die
-			//boolean AF, boolean AD, boolean AA, boolean AI,				//Agents
-			//boolean RE, boolean RC, boolean RSh,boolean RS,boolean RW	//Resources
+			boolean MT, boolean FAIL,									//Finish, Die
+			boolean AF, boolean AD, boolean AA, boolean AI,				//Agents
+			boolean RE, boolean RC, boolean RSh,boolean RS,boolean RW	//Resources
 			);
 	
 	//Find the exit

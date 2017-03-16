@@ -34,10 +34,16 @@ public class Node {
 	public void setVisited(boolean visited) {
 		this.visited = visited;
 	}
-
+	
+	@Override
+	public String toString(){
+		String ret = String.valueOf(pos[0]) + " " + String.valueOf(pos[1]);
+		return 	ret;
+	}
+	/*
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-	}
+	}*/
 
 }

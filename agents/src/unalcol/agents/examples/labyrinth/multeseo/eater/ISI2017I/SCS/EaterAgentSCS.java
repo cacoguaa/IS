@@ -15,6 +15,7 @@ public class EaterAgentSCS extends AgentSCS {
 	private int posY;
 	private boolean change;
 	private int steps;
+	private ArrayList<Node> toAdd;
 
 	Node old;
 
@@ -25,52 +26,63 @@ public class EaterAgentSCS extends AgentSCS {
 	};
 
 	@Override
-	public int accion(boolean PF, boolean PD, boolean PA, boolean PI, // Moves
-			boolean MT, boolean FAIL // Finish, Die
-	) {
+	public int accion(
+			boolean PF, boolean PD, boolean PA, boolean PI, // Moves
+			boolean MT, boolean FAIL, // Finish, Die
+			boolean AF, boolean AD, boolean AA, boolean AI,	// Agents
+			boolean RE, boolean RC, boolean RSh,boolean RS, boolean RW // Resources
+			) {
 
-		if (MT) {
+		if ( MT ) {
 			nodes.clear();
 			return -1;
 		}
-
-		if (!nodes.isEmpty()) {
-
-			boolean[] walls = new boolean[] { PF, PD, PA, PI };
-			Node actual = nodes.peek();
-
-			// A near path exist
-			if (canMove(actual, walls)) {
-				if (change) {
-					int movX = -1, movY = -1;
-					
-					movX = (actual.pos[0] - posX);
-					movY = (actual.pos[1] - posY);
-					change = false;
-					return movement(movX, movY);
-				}
-
-				old = nodes.pop();
-				posX = actual.pos[0];
-				posY = actual.pos[1];
-				if (createChildren(walls, actual)) {
-					parents.add(actual);
-					int movX = -1, movY = -1;
-					
-					movX = (nodes.peek().pos[0] - posX);
-					movY = (nodes.peek().pos[1] - posY);
-					return movement(movX, movY); // k
-				} else
-					return -1;
-
+		if( !AF && !AD && !AA && !AI){
+			if (!nodes.isEmpty()) {
+				
+				boolean[] walls = new boolean[] { PF, PD, PA, PI };
+				Node actual = nodes.peek();
+	
+				return normalMove( actual, walls);
+	
 			} else {
-				// A far path exist
-				return searchPath(actual);
+				//initialize();		//Do the search again
+				return -1;
+			}
+		} else{
+			// TODO Agent detected
+			return -1;
+		}
+	}
+
+	private int normalMove(Node actual, boolean[] walls) {
+
+		// A near path exist
+		if (canMove(actual, walls)) {
+			if (change) {
+				int movX = -1, movY = -1;
+				
+				movX = (actual.pos[0] - posX);
+				movY = (actual.pos[1] - posY);
+				change = false;
+				return movement(movX, movY);
 			}
 
+			old = nodes.pop();
+			posX = actual.pos[0];
+			posY = actual.pos[1];
+			if (createChildren(walls, actual)) {
+				parents.add(actual);
+				int movX = -1, movY = -1;
+				
+				movX = (nodes.peek().pos[0] - posX);
+				movY = (nodes.peek().pos[1] - posY);
+				return movement(movX, movY); // k
+			} else
+				return -1;
 		} else {
-			//initialize();
-			return -1;
+			// A far path exist
+			return searchPath(actual);
 		}
 	}
 
@@ -261,16 +273,36 @@ public class EaterAgentSCS extends AgentSCS {
 	public boolean createChildren(boolean[] walls, Node actual) {
 		int nChilds = 0;
 		boolean success = false;
+		toAdd = new ArrayList<>();
 		for (int i = 0; i <= 3; i++) {
 			if (!walls[i]) {
 				nChilds += createState(i, actual);
 			}
 		}
-		if (nChilds > 0)
+		if (nChilds > 0){
+			shuffle(nChilds);
 			success = true;
+		}
 		return success;
 	}
-
+	
+	public void shuffle(int nChilds){
+		if( nChilds == 1){
+			nodes.add( toAdd.remove(0) );
+		} else {
+			int ord = -1;
+			while( !toAdd.isEmpty() ){
+				/* TODO remove
+				for(int i = 0; i<toAdd.size(); i++){
+					System.out.println(toAdd.get(i));
+				}*/
+				ord = (int) (Math.random()*(toAdd.size()));
+				//System.out.println("--------	" + ord );
+				nodes.add( toAdd.remove(ord) );
+			}
+		}
+	}
+	
 	public int createState(int i, Node node) {
 		int success = 0;
 		int newX = 0;
@@ -312,7 +344,8 @@ public class EaterAgentSCS extends AgentSCS {
 		// Verify if the position isn't visited yet
 		if (states.indexOf(state) == -1) {
 			Node child = new Node(newX, newY, node, node.depth + 1);
-			nodes.add(child);
+			toAdd.add(child);
+			//nodes.add(child); TODO remove
 			states.add(state);
 			node.childs.add(child);
 			success = 1;
@@ -325,6 +358,7 @@ public class EaterAgentSCS extends AgentSCS {
 		nodes = new Stack<>();
 		parents = new Stack<>();
 		states = new ArrayList<>();
+		toAdd = new ArrayList<>();
 		steps = 0;
 		change = false;
 		head = 0;

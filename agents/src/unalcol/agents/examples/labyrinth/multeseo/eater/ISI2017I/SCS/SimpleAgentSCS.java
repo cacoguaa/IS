@@ -36,8 +36,11 @@ public class SimpleAgentSCS extends AgentSCS {
 	};
 
 	@Override
-	public int accion(boolean PF, boolean PD, boolean PA, boolean PI, // Moves
-			boolean MT, boolean FAIL // Finish, Die
+	public int accion(
+			boolean PF, boolean PD, boolean PA, boolean PI, // Moves
+			boolean MT, boolean FAIL, // Finish, Die
+			boolean AF, boolean AD, boolean AA, boolean AI,	// Agents
+			boolean RE, boolean RC, boolean RSh,boolean RS, boolean RW // Resources
 	) {
 		//System.out.println("-------------------------------");
 		if( MT || nodes.isEmpty()){
@@ -325,5 +328,6 @@ public class SimpleAgentSCS extends AgentSCS {
 		
 		return success;
 	}
+
 	
 }
