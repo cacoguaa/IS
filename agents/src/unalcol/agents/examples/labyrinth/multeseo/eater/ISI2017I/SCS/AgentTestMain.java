@@ -34,6 +34,7 @@ public class AgentTestMain {
 	    
 	    Agent agent1 = new Agent(teseo[index1]);    
 	    //Agent agent2 = new Agent(teseo[index2]);
+	
 	    
 	    //Agent agent3 = new Agent(p3);
 	    Vector<Agent> agent = new Vector<Agent>();
