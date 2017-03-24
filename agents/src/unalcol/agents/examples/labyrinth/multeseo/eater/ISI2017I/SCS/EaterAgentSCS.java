@@ -52,6 +52,7 @@ public class EaterAgentSCS extends AgentSCS {
 		} else{
 			// TODO Agent detected
 			return -1;
+			
 		}
 	}
 
