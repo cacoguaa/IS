@@ -26,9 +26,9 @@ public class MultiTeseoEaterLabyrinth extends MultiAgentLabyrinth{
 
     public static final int MAX_ENERGY_LEVEL = 40;
     public static final int INC_ENERGY_LEVEL = 10;
-    public static final int DEC_ENERGY_LEVEL = 0;
+    public static final int DEC_ENERGY_LEVEL = 5;
 
-    public static final int INITIAL_ENERGY = 40;
+    public static final int INITIAL_ENERGY = 20;
  
     protected int[]  agent_energy_level;
     
@@ -107,10 +107,15 @@ public class MultiTeseoEaterLabyrinth extends MultiAgentLabyrinth{
 	          break;
 	        default:
 	          if( actionID == 2 ){
-//<-------------//agent_energy_level[i]--;
-	            
+	            agent_energy_level[i]--;
 	          }
-	          super.act(agent, action);
+	          if( actionID != 2 || !((Boolean) p.getAttribute("afront")).booleanValue() ) super.act(agent, action);
+	          else {
+	                msg = SimpleView.ERROR +
+	                      "[There is a wall/agent in front of mine (" + agent.getProgram().getClass().getSimpleName() +"). Action " + act +
+	                      " not executed]";
+	                updateViews(msg);
+	            }
 	          break;
 	      }
 	    }
