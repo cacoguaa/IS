@@ -2,16 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/agents.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/data.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/demo.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/evolution.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/gui.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/math.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/mysql-connector-java-5.1.37-bin.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/optimization.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/random.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/services.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ace/Workspace/Eclipse/Inteligentes/libs/types.jar"/>
+	<classpathentry kind="lib" path="/home/jgomez/git/unalcol/libs/math.jar"/>
+	<classpathentry kind="lib" path="/home/jgomez/git/unalcol/libs/types.jar"/>
+	<classpathentry kind="lib" path="/home/jgomez/git/unalcol/libs/random.jar"/>
+	<classpathentry kind="lib" path="/home/jgomez/git/unalcol/libs/services.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
