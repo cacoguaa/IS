@@ -60,6 +60,7 @@ public abstract class AgentSCS implements AgentProgram {
 			RS = ((Boolean) p.getAttribute(language.getPercept(13))).booleanValue();
 			RW = ((Boolean) p.getAttribute(language.getPercept(14))).booleanValue();
 			}
+			System.out.println(p.getAttribute(language.getPercept(15)));
 			//int d = accion(PF, PD, PA, PI, MT, FAIL, AF, AD, AA, AI, RE, RC, RSh, RS, RW);
 			
 			int d = accion(

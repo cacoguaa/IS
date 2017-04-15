@@ -22,7 +22,7 @@ public class Clock {
     public void init( boolean w_turn ){
         white_turn = w_turn;
         start_time = System.currentTimeMillis();
-        System.out.println(start_time);
+        System.out.println(start_time + " - Start_time");
     }
     
     public void swap(){

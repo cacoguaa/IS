@@ -12,7 +12,7 @@ public class AgentTestMain {
 	
     private static SimpleLanguage getLanguage(){
 	    return  new SimpleLanguage( new String[]{"front", "right", "back", "left", "treasure", "fail",
-	        "afront", "aright", "aback", "aleft", "resource", "resource-color", "resource-shape", "resource-size", "resource-weight"},
+	        "afront", "aright", "aback", "aleft", "resource", "resource-color", "resource-shape", "resource-size", "resource-weight","energy_level"},
 	                                   new String[]{"no_op", "die", "advance", "rotate", "eat"}
 	                                   );
 	  }

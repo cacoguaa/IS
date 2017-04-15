@@ -14,9 +14,10 @@ public class FourInRowMain {
   public static void main( String[] argv ){
     // Reflection
     Agent w_agent = new Agent( new DummyFourInRowAgentProgram("white") );
-    Agent b_agent = new Agent( new DummyFourInRowAgentProgram("black") );
+    Agent b_agent = new Agent( new FourInRowSCSAgent("black") );
     FourInRowMainFrame frame = new FourInRowMainFrame( w_agent, b_agent );
     frame.setVisible(true);
+    
   }
     
 }
