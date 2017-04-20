@@ -17,7 +17,7 @@ public class SimpleFourInRowSCS implements AgentProgram {
     
     @Override
     public Action compute(Percept p) {        
-        long time = (long)(200 * Math.random());
+        long time = (long)(20 * Math.random());
         try{
            Thread.sleep(time);
         }catch(Exception e){}
@@ -29,7 +29,6 @@ public class SimpleFourInRowSCS implements AgentProgram {
             int state = i + j*100;
             boolean flag =(states.indexOf(state) == -1) && (i==n-1);
             if( i+1 < n ) flag = flag || !p.getAttribute((i+1)+":"+j).equals((String)FourInRow.SPACE);
-            System.out.println(state);
             while( !flag ){
                 i = (int)(n*Math.random());
                 j = (int)(n*Math.random());
@@ -37,10 +36,9 @@ public class SimpleFourInRowSCS implements AgentProgram {
                 if( i+1 < n ) flag = flag || !p.getAttribute((i+1)+":"+j).equals((String)FourInRow.SPACE);
             }
             states.add( state );
-            System.out.println(state);
             return new Action( i+":"+j+":"+color );
         }
-        return new Action(FourInRow.PASS);
+        return new Action(0+":"+0+":"+color);
     }
 
     @Override
