@@ -6,16 +6,16 @@ import unalcol.agents.Percept;
 import unalcol.agents.simulate.util.SimpleLanguage;
 import unalcol.types.collection.vector.Vector;
 
-public abstract class AgentSCS implements AgentProgram {
+public abstract class AgentSCSEater implements AgentProgram {
 
 	protected SimpleLanguage language;
 	protected Vector<String> cmd = new Vector<String>();
 	
 	//Constructors
-	public AgentSCS( ) {
+	public AgentSCSEater( ) {
 	}
 
-	public AgentSCS(   SimpleLanguage _language  ) {
+	public AgentSCSEater(   SimpleLanguage _language  ) {
 		language = _language;
 	}
 	
@@ -41,7 +41,6 @@ public abstract class AgentSCS implements AgentProgram {
 			boolean MT = ((Boolean) p.getAttribute(language.getPercept(4))).booleanValue();
 			boolean FAIL = ((Boolean) p.getAttribute(language.getPercept(5))).booleanValue();
 			
-			
 			//Agents
 			boolean AF = ((Boolean) p.getAttribute(language.getPercept(6))).booleanValue();
 			boolean AD = ((Boolean) p.getAttribute(language.getPercept(7))).booleanValue();
@@ -62,15 +61,14 @@ public abstract class AgentSCS implements AgentProgram {
 			}
 			
 			//Energy Level
-			
-			System.out.println(p.getAttribute(language.getPercept(15)));
-			//int d = accion(PF, PD, PA, PI, MT, FAIL, AF, AD, AA, AI, RE, RC, RSh, RS, RW);
+			int EL = (int) p.getAttribute(language.getPercept(15));
 			
 			int d = accion(
 					PF, PD, PA, PI,
 					MT, FAIL,
 					AF, AD, AA, AI,
-					RE, RC, RSh,RS,RW
+					RE, RC, RSh,RS,RW,
+					EL
 					);
 			
 			if (0 <= d && d < 4) {
@@ -94,7 +92,8 @@ public abstract class AgentSCS implements AgentProgram {
 			boolean PF, boolean PD, boolean PA, boolean PI, 			//Moves
 			boolean MT, boolean FAIL,									//Finish, Die
 			boolean AF, boolean AD, boolean AA, boolean AI,				//Agents
-			boolean RE, boolean RC, boolean RSh,boolean RS,boolean RW	//Resources
+			boolean RE, boolean RC, boolean RSh,boolean RS,boolean RW,	//Resources
+			int EL
 			);
 	
 	//Find the exit

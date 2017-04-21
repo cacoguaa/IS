@@ -5,7 +5,7 @@ import java.util.Stack;
 
 import unalcol.agents.simulate.util.SimpleLanguage;
 
-public class EaterAgentSCS extends AgentSCS {
+public class EaterAgentSCS extends AgentSCSEater {
 	
 	private Stack<Node> nodes;
 	private Stack<Node> parents;
@@ -16,6 +16,8 @@ public class EaterAgentSCS extends AgentSCS {
 	private boolean change;
 	private int steps;
 	private ArrayList<Node> toAdd;
+	private int mel;
+	private boolean e;
 
 	Node old;
 
@@ -23,6 +25,7 @@ public class EaterAgentSCS extends AgentSCS {
 		super(_lenguage);
 		// initialize all
 		initialize();
+		mel = 0;
 	};
 
 	@Override
@@ -30,30 +33,42 @@ public class EaterAgentSCS extends AgentSCS {
 			boolean PF, boolean PD, boolean PA, boolean PI, // Moves
 			boolean MT, boolean FAIL, // Finish, Die
 			boolean AF, boolean AD, boolean AA, boolean AI,	// Agents
-			boolean RE, boolean RC, boolean RSh,boolean RS, boolean RW // Resources
+			boolean RE, boolean RC, boolean RSh,boolean RS, boolean RW, // Resources
+			int EL
 			) {
 
 		if ( MT ) {
 			nodes.clear();
 			return -1;
 		}
-		if( !AF && !AD && !AA && !AI){
+		
+		if(EL > mel) mel = EL;
+		System.out.println( EL );
+		System.out.println( mel );
+		e =  haveEnergy(EL);
+		if( !AF && !AD && !AA && !AI && e){
 			if (!nodes.isEmpty()) {
-				
 				boolean[] walls = new boolean[] { PF, PD, PA, PI };
 				Node actual = nodes.peek();
-	
 				return normalMove( actual, walls);
-	
 			} else {
 				//initialize();		//Do the search again
 				return -1;
 			}
-		} else{
+		} else if(!e){
+			// TODO Eater Low Energy
+			return 5;
+		} else {
 			// TODO Agent detected
 			return -1;
-			
 		}
+	}
+	
+	public boolean haveEnergy(int EL){
+		if( EL < (mel*2)/3){
+			return false; //Se Debe Comer //TODO
+		}
+		return true;
 	}
 
 	private int normalMove(Node actual, boolean[] walls) {

@@ -7,10 +7,10 @@ import unalcol.agents.Action;
 import unalcol.agents.AgentProgram;
 import unalcol.agents.Percept;
 
-public class SimpleFourInRowSCS implements AgentProgram {
+public class FourInRowSCS implements AgentProgram {
     protected String color;
     ArrayList<Integer> states;
-    public SimpleFourInRowSCS( String color ){
+    public FourInRowSCS( String color ){
         this.color = color;        
         states = new ArrayList<Integer>();
     }
