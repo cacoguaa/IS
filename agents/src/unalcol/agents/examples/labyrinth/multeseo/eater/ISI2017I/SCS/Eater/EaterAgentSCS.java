@@ -1,4 +1,4 @@
-package unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS;
+package unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Eater;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -10,6 +10,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 	private Stack<Node> nodes;
 	private Stack<Node> parents;
 	private ArrayList<Integer> states;
+	private ArrayList<Integer> foods;
 	private int head;
 	private int posX;
 	private int posY;
@@ -46,9 +47,13 @@ public class EaterAgentSCS extends AgentSCSEater {
 		System.out.println( EL );
 		System.out.println( mel );
 		e =  haveEnergy(EL);
+		
 		if( !AF && !AD && !AA && !AI && e){
 			if (!nodes.isEmpty()) {
 				boolean[] walls = new boolean[] { PF, PD, PA, PI };
+				if(RE){
+					saveFood();
+				}
 				Node actual = nodes.peek();
 				return normalMove( actual, walls);
 			} else {
@@ -69,6 +74,24 @@ public class EaterAgentSCS extends AgentSCSEater {
 			return false; //Se Debe Comer //TODO
 		}
 		return true;
+	}
+	
+	void saveFood(){
+		int state;
+		// build the state
+		if (posX >= 0)
+			state = posX * 10000;
+		else {
+			state = 1000;
+			state += (-posX) * 10000;
+		}
+		if (posY >= 0)
+			state += posY * 10;
+		else {
+			state += 1;
+			state += (-posY) * 10;
+		}
+		if( foods.indexOf(state) == -1 ) foods.add(state);
 	}
 
 	private int normalMove(Node actual, boolean[] walls) {
@@ -374,6 +397,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		nodes = new Stack<>();
 		parents = new Stack<>();
 		states = new ArrayList<>();
+		foods = new ArrayList<>();
 		toAdd = new ArrayList<>();
 		steps = 0;
 		change = false;

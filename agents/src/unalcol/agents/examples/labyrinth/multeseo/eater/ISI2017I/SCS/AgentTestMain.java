@@ -5,6 +5,7 @@ import unalcol.agents.AgentProgram;
 import unalcol.agents.examples.labyrinth.Labyrinth;
 import unalcol.agents.examples.labyrinth.LabyrinthDrawer;
 import unalcol.agents.examples.labyrinth.multeseo.eater.MultiTeseoEaterMainFrame;
+import unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Eater.EaterAgentSCS;
 import unalcol.agents.simulate.util.SimpleLanguage;
 import unalcol.types.collection.vector.Vector;
 

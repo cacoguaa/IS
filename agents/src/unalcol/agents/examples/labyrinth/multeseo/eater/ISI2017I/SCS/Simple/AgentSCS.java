@@ -1,4 +1,4 @@
-package unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS;
+package unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Simple;
 
 import unalcol.agents.Action;
 import unalcol.agents.AgentProgram;
