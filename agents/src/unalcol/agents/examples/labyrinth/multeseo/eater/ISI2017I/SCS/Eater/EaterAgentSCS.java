@@ -11,6 +11,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 	private Stack<Node> parents;
 	private ArrayList<Integer> states;
 	private ArrayList<Integer> foods;
+	private ArrayList<Food> foodContainer;
 	private int head;
 	private int posX;
 	private int posY;
@@ -62,11 +63,15 @@ public class EaterAgentSCS extends AgentSCSEater {
 			}
 		} else if(!e){
 			// TODO Eater Low Energy
-			return 5;
+			return moveToFood();
 		} else {
 			// TODO Agent detected
 			return -1;
 		}
+	}
+	
+	public int moveToFood(){
+		return 0;
 	}
 	
 	public boolean haveEnergy(int EL){
@@ -91,7 +96,12 @@ public class EaterAgentSCS extends AgentSCSEater {
 			state += 1;
 			state += (-posY) * 10;
 		}
-		if( foods.indexOf(state) == -1 ) foods.add(state);
+		
+		if( foods.indexOf(state) == -1 ){
+			Food food = new Food(state);
+			foodContainer.add(food);
+			foods.add(state);
+		}
 	}
 
 	private int normalMove(Node actual, boolean[] walls) {
@@ -397,8 +407,9 @@ public class EaterAgentSCS extends AgentSCSEater {
 		nodes = new Stack<>();
 		parents = new Stack<>();
 		states = new ArrayList<>();
-		foods = new ArrayList<>();
 		toAdd = new ArrayList<>();
+		foods = new ArrayList<>();
+		foodContainer = new ArrayList<>();
 		steps = 0;
 		change = false;
 		head = 0;
