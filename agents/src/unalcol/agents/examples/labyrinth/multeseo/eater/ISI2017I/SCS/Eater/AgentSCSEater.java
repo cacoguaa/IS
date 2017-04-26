@@ -71,11 +71,14 @@ public abstract class AgentSCSEater implements AgentProgram {
 					EL
 					);
 			
-			if (0 <= d && d < 4) {
-				for (int i = 1; i <= d; i++) {
-					cmd.add(language.getAction(3)); // rotate
+			if (0 <= d && d < 5) {
+				if( d != 4){
+					for (int i = 1; i <= d; i++) {
+						cmd.add(language.getAction(3)); // rotate
+					}
+					cmd.add(language.getAction(2)); // advance
 				}
-				cmd.add(language.getAction(2)); // advance
+				else cmd.add(language.getAction(4));
 			} else {
 				cmd.add(language.getAction(0)); // die
 			}

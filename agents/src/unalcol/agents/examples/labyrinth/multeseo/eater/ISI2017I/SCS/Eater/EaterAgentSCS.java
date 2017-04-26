@@ -9,16 +9,26 @@ public class EaterAgentSCS extends AgentSCSEater {
 	
 	private Stack<Node> nodes;
 	private Stack<Node> parents;
+	
 	private ArrayList<Integer> states;
-	private ArrayList<Integer> foods;
-	private ArrayList<Food> foodContainer;
+	private ArrayList<Byte> foods;
+	private ArrayList<Byte> goodFood;
+	private ArrayList<Node> toAdd;
+	private ArrayList<Integer> foodsPos;
+	
 	private int head;
 	private int posX;
 	private int posY;
-	private boolean change;
 	private int steps;
-	private ArrayList<Node> toAdd;
-	private int mel;
+	private int maxEL;
+	private int actualEL;
+	private int actualFood;
+
+	private byte idFood;
+	private byte eatStep;
+	
+	private boolean change;
+	private boolean start;
 	private boolean e;
 
 	Node old;
@@ -27,9 +37,20 @@ public class EaterAgentSCS extends AgentSCSEater {
 		super(_lenguage);
 		// initialize all
 		initialize();
-		mel = 0;
+		goodFood = new ArrayList<Byte>(16);
+		maxEL = 0;
+		eatStep = 1;
+		start = true;
 	};
 
+	public boolean fMaxEnergy(int EL){
+		if( EL > maxEL){
+			maxEL = EL;
+			return false;
+		}
+		else return true;
+	}
+	
 	@Override
 	public int accion(
 			boolean PF, boolean PD, boolean PA, boolean PI, // Moves
@@ -38,30 +59,56 @@ public class EaterAgentSCS extends AgentSCSEater {
 			boolean RE, boolean RC, boolean RSh,boolean RS, boolean RW, // Resources
 			int EL
 			) {
-
+		// Goal reach
 		if ( MT ) {
 			nodes.clear();
 			return -1;
 		}
+		//Read initial energy level
+		if(start){
+			maxEL = EL;
+			actualEL = EL;
+			start = false;
+		}		
+		//Resource Found
+		if( RE ){
+			boolean[] foodChar = new boolean[] { RC, RSh, RS, RW };
+			idFood = generateIdFood(foodChar);
+			//Find First Good Food
+			if( goodFood.isEmpty() || eatStep == 2){
+				switch( eatStep ){
+				case 1:
+					System.out.println("EL= " + EL + ", maxEl= " + maxEL);
+					foods.add(idFood);
+					eatStep = 2;
+					return 4;
+				case 2:
+					if( EL > actualEL){
+						goodFood.add(idFood);
+						actualEL = EL;
+						eatStep = 3;
+					}	
+					break;
+				case 3:
+					
+					break;
+				}
+
 		
-		if(EL > mel) mel = EL;
-		System.out.println( EL );
-		System.out.println( mel );
+			}
+		}
+		actualEL = EL;
 		e =  haveEnergy(EL);
-		
 		if( !AF && !AD && !AA && !AI && e){
 			if (!nodes.isEmpty()) {
 				boolean[] walls = new boolean[] { PF, PD, PA, PI };
-				if(RE){
-					saveFood();
-				}
 				Node actual = nodes.peek();
 				return normalMove( actual, walls);
 			} else {
 				//initialize();		//Do the search again
 				return -1;
 			}
-		} else if(!e){
+		} else if(!e && !goodFood.isEmpty()){
 			// TODO Eater Low Energy
 			return moveToFood();
 		} else {
@@ -69,41 +116,29 @@ public class EaterAgentSCS extends AgentSCSEater {
 			return -1;
 		}
 	}
+
+
+	public byte generateIdFood(boolean[] foodChar){
+		byte idFood = 0;
+		for(int i = 0; i < foodChar.length; i++){
+			if(foodChar[i]){
+				idFood += (byte) Math.pow(2, i);
+			}
+		}
+		return idFood;
+	}
 	
 	public int moveToFood(){
 		return 0;
 	}
 	
 	public boolean haveEnergy(int EL){
-		if( EL < (mel*2)/3){
+		/*if( EL < (maxEL*2)/3){
 			return false; //Se Debe Comer //TODO
-		}
+		}*/
 		return true;
 	}
 	
-	void saveFood(){
-		int state;
-		// build the state
-		if (posX >= 0)
-			state = posX * 10000;
-		else {
-			state = 1000;
-			state += (-posX) * 10000;
-		}
-		if (posY >= 0)
-			state += posY * 10;
-		else {
-			state += 1;
-			state += (-posY) * 10;
-		}
-		
-		if( foods.indexOf(state) == -1 ){
-			Food food = new Food(state);
-			foodContainer.add(food);
-			foods.add(state);
-		}
-	}
-
 	private int normalMove(Node actual, boolean[] walls) {
 
 		// A near path exist
@@ -409,12 +444,11 @@ public class EaterAgentSCS extends AgentSCSEater {
 		states = new ArrayList<>();
 		toAdd = new ArrayList<>();
 		foods = new ArrayList<>();
-		foodContainer = new ArrayList<>();
 		steps = 0;
-		change = false;
 		head = 0;
 		posX = 0;
 		posY = 0;
+		change = false;
 		// Create root node
 		Node root = new Node(posX, posY, null, 0);
 		old = root;
