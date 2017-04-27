@@ -21,8 +21,9 @@ public class EaterAgentSCS extends AgentSCSEater {
 	private int posY;
 	private int steps;
 	private int maxEL;
-	private int actualEL;
+	private int oldEL;
 	private int actualFood;
+	private int limit;
 
 	private byte idFood;
 	private byte eatStep;
@@ -39,13 +40,14 @@ public class EaterAgentSCS extends AgentSCSEater {
 		initialize();
 		goodFood = new ArrayList<Byte>(16);
 		maxEL = 0;
-		eatStep = 1;
+		eatStep = -2;
 		start = true;
 	};
 
 	public boolean fMaxEnergy(int EL){
 		if( EL > maxEL){
 			maxEL = EL;
+			limit = EL/3;
 			return false;
 		}
 		else return true;
@@ -67,7 +69,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		//Read initial energy level
 		if(start){
 			maxEL = EL;
-			actualEL = EL;
+			limit = EL/3;
 			start = false;
 		}		
 		//Resource Found
@@ -75,29 +77,53 @@ public class EaterAgentSCS extends AgentSCSEater {
 			boolean[] foodChar = new boolean[] { RC, RSh, RS, RW };
 			idFood = generateIdFood(foodChar);
 			//Find First Good Food
-			if( goodFood.isEmpty() || eatStep == 2){
+			if( goodFood.isEmpty() || eatStep < 1){
 				switch( eatStep ){
-				case 1:
-					System.out.println("EL= " + EL + ", maxEl= " + maxEL);
+				case -2:
 					foods.add(idFood);
-					eatStep = 2;
+					oldEL = EL;
+					eatStep = -1;
 					return 4;
-				case 2:
-					if( EL > actualEL){
+				case -1:
+					if( EL > oldEL){
 						goodFood.add(idFood);
-						actualEL = EL;
-						eatStep = 3;
-					}	
+						oldEL = EL;
+						if(maxEL < EL){
+							maxEL = EL;
+							limit = EL/3;
+							System.out.println(limit);
+						}
+						eatStep = 0;
+						return -1;
+					}
+					else eatStep = -2;
 					break;
-				case 3:
-					
+				case 0:
+					if(fMaxEnergy(EL)) eatStep = 1;
+					else return 4;
 					break;
 				}
-
-		
+			}
+			//Taste New Food
+			if(foods.indexOf(idFood) == -1 || eatStep == 2){
+				switch( eatStep ){
+				case 1:
+					foods.add(idFood);
+					eatStep = 2;
+					oldEL = EL;
+					return 4;
+				case 2:
+					if( EL > oldEL)goodFood.add(idFood);
+					eatStep = 1;
+					break;
+				}
+			}
+			//Find Good Food And Restore Heal
+			else if( goodFood.indexOf(idFood) != -1 && EL < (2*limit)){
+				return 4;
 			}
 		}
-		actualEL = EL;
+		oldEL = EL;
 		e =  haveEnergy(EL);
 		if( !AF && !AD && !AA && !AI && e){
 			if (!nodes.isEmpty()) {
@@ -129,13 +155,14 @@ public class EaterAgentSCS extends AgentSCSEater {
 	}
 	
 	public int moveToFood(){
-		return 0;
+		System.out.println("low energy");
+		return -1;
 	}
 	
 	public boolean haveEnergy(int EL){
-		/*if( EL < (maxEL*2)/3){
+		if( EL < (maxEL*1)/3){
 			return false; //Se Debe Comer //TODO
-		}*/
+		}
 		return true;
 	}
 	

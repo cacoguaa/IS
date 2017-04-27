@@ -1,6 +1,5 @@
 package unalcol.agents.examples.games.fourinrow;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import unalcol.agents.Action;
