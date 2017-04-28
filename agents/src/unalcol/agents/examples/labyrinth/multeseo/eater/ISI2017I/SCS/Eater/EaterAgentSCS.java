@@ -117,6 +117,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 				return 4;
 			}
 		}
+		
 		//Update ActualEnergy
 		oldEL = EL;
 		//Check If Agent's Energy Is Enough
