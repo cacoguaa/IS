@@ -78,7 +78,7 @@ public abstract class AgentSCSEater implements AgentProgram {
 					}
 					cmd.add(language.getAction(2)); // advance
 				}
-				else cmd.add(language.getAction(4));
+				else cmd.add(language.getAction(4)); // eat
 			} else {
 				cmd.add(language.getAction(0)); // die
 			}
@@ -88,15 +88,12 @@ public abstract class AgentSCSEater implements AgentProgram {
 		return new Action(x);
 	}
 	
-//	public abstract void redPasos();
-	
-	//Action method 
 	public abstract int accion(
 			boolean PF, boolean PD, boolean PA, boolean PI, 			//Moves
 			boolean MT, boolean FAIL,									//Finish, Die
 			boolean AF, boolean AD, boolean AA, boolean AI,				//Agents
 			boolean RE, boolean RC, boolean RSh,boolean RS,boolean RW,	//Resources
-			int EL
+			int EL														//Energy Level
 			);
 	
 	//Find the exit

@@ -24,6 +24,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 	private int oldEL;
 	private int actualFood;
 	private int limit;
+	private int waitSteps;
 
 	private byte idFood;
 	private byte eatStep;
@@ -39,20 +40,12 @@ public class EaterAgentSCS extends AgentSCSEater {
 		// initialize all
 		initialize();
 		goodFood = new ArrayList<Byte>(16);
+		waitSteps = 3;
 		maxEL = 0;
 		eatStep = -2;
 		start = true;
 	};
 
-	public boolean fMaxEnergy(int EL){
-		if( EL > maxEL){
-			maxEL = EL;
-			limit = EL/3;
-			return false;
-		}
-		else return true;
-	}
-	
 	@Override
 	public int accion(
 			boolean PF, boolean PD, boolean PA, boolean PI, // Moves
@@ -74,6 +67,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		}		
 		//Resource Found
 		if( RE ){
+			//Food Chars
 			boolean[] foodChar = new boolean[] { RC, RSh, RS, RW };
 			idFood = generateIdFood(foodChar);
 			//Find First Good Food
@@ -123,27 +117,34 @@ public class EaterAgentSCS extends AgentSCSEater {
 				return 4;
 			}
 		}
+		//Update ActualEnergy
 		oldEL = EL;
+		//Check If Agent's Energy Is Enough
 		e =  haveEnergy(EL);
+		//Normal Move Without Other Agent Near And Enough Energy
 		if( !AF && !AD && !AA && !AI && e){
+			//Have Nodes To Visit
 			if (!nodes.isEmpty()) {
 				boolean[] walls = new boolean[] { PF, PD, PA, PI };
 				Node actual = nodes.peek();
 				return normalMove( actual, walls);
 			} else {
-				//initialize();		//Do the search again
+				//initialize();		//TODO Do the search again
 				return -1;
 			}
 		} else if(!e && !goodFood.isEmpty()){
 			// TODO Eater Low Energy
 			return moveToFood();
-		} else {
+		} else if(goodFood.isEmpty()){
+			// TODO Find Good Food
+			return 0;
+		} else{
 			// TODO Agent detected
-			return -1;
+			return reactToAgent();
 		}
 	}
 
-
+	//Generate An Unique Id To Specific Food
 	public byte generateIdFood(boolean[] foodChar){
 		byte idFood = 0;
 		for(int i = 0; i < foodChar.length; i++){
@@ -153,12 +154,36 @@ public class EaterAgentSCS extends AgentSCSEater {
 		}
 		return idFood;
 	}
+
+	//Update Agent's Max Energy
+	public boolean fMaxEnergy(int EL){
+		if( EL > maxEL){
+			maxEL = EL;
+			limit = EL/3;
+			return false;
+		}
+		else return true;
+	}
 	
+	//Find Path To Good Food
 	public int moveToFood(){
-		System.out.println("low energy");
+		System.out.println("low energy"); //TODO
 		return -1;
 	}
 	
+	//React To A Near Opponent Agent
+	public int reactToAgent(){
+		if( waitSteps > 0){
+			waitSteps--;
+			return -1;
+		}
+		else{
+			//TODO Find other path
+			return -1;
+		}
+	}
+	
+	//Check If There Are Enough Energy
 	public boolean haveEnergy(int EL){
 		if( EL < (maxEL*1)/3){
 			return false; //Se Debe Comer //TODO
@@ -166,13 +191,13 @@ public class EaterAgentSCS extends AgentSCSEater {
 		return true;
 	}
 	
+	//Normal Move
 	private int normalMove(Node actual, boolean[] walls) {
-
-		// A near path exist
+		// A Near Path Exist
 		if (canMove(actual, walls)) {
+			//If Return On a Path
 			if (change) {
 				int movX = -1, movY = -1;
-				
 				movX = (actual.pos[0] - posX);
 				movY = (actual.pos[1] - posY);
 				change = false;
@@ -182,6 +207,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 			old = nodes.pop();
 			posX = actual.pos[0];
 			posY = actual.pos[1];
+			//Verify And Create Childs
 			if (createChildren(walls, actual)) {
 				parents.add(actual);
 				int movX = -1, movY = -1;
@@ -192,15 +218,15 @@ public class EaterAgentSCS extends AgentSCSEater {
 			} else
 				return -1;
 		} else {
-			// A far path exist
+			// A Far Path Exist
 			return searchPath(actual);
 		}
 	}
-
+	
+	//Check If The Node Have Childs
 	public boolean canMove(Node actual, boolean[] walls) {
 		if (steps > 0) {
 			boolean can = false;
-			
 			can = (Math.abs(posX - actual.pos[0]) + Math.abs(posY - actual.pos[1])) < 2;
 			if (can && (actual.depth < old.depth))
 				can = false;
@@ -208,7 +234,8 @@ public class EaterAgentSCS extends AgentSCSEater {
 		} else
 			return true;
 	}
-
+	
+	//Find A Return Path
 	public int searchPath(Node objetive) {
 		int k = -1, movX = 0, movY = 0;
 		
@@ -224,6 +251,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		return k;
 	}
 
+	//Return The Direction Move
 	public int movement(int movX, int movY) {
 		int k = -1;
 
@@ -303,6 +331,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		return k;
 	}
 
+	//Return Direction Move Without Update The Head
 	public int movement2(int movX, int movY) {
 		int k = -1;
 
@@ -381,6 +410,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		return k;
 	}
 
+	//Create All Node's Childs
 	public boolean createChildren(boolean[] walls, Node actual) {
 		int nChilds = 0;
 		boolean success = false;
@@ -397,23 +427,20 @@ public class EaterAgentSCS extends AgentSCSEater {
 		return success;
 	}
 	
+	//Randomize Children Order
 	public void shuffle(int nChilds){
 		if( nChilds == 1){
 			nodes.add( toAdd.remove(0) );
 		} else {
 			int ord = -1;
 			while( !toAdd.isEmpty() ){
-				/* TODO remove
-				for(int i = 0; i<toAdd.size(); i++){
-					System.out.println(toAdd.get(i));
-				}*/
 				ord = (int) (Math.random()*(toAdd.size()));
-				//System.out.println("--------	" + ord );
 				nodes.add( toAdd.remove(ord) );
 			}
 		}
 	}
 	
+	//Generate A Node's State
 	public int createState(int i, Node node) {
 		int success = 0;
 		int newX = 0;
@@ -456,7 +483,6 @@ public class EaterAgentSCS extends AgentSCSEater {
 		if (states.indexOf(state) == -1) {
 			Node child = new Node(newX, newY, node, node.depth + 1);
 			toAdd.add(child);
-			//nodes.add(child); TODO remove
 			states.add(state);
 			node.childs.add(child);
 			success = 1;
@@ -465,6 +491,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		return success;
 	}
 
+	//Initialize
 	public void initialize() {
 		nodes = new Stack<>();
 		parents = new Stack<>();
