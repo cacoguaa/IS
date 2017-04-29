@@ -54,10 +54,10 @@ public abstract class AgentSCSEater implements AgentProgram {
 			boolean RS = false;
 			boolean RW = false;
 			if( RE ){
-			RC = ((Boolean) p.getAttribute(language.getPercept(11))).booleanValue();
-			RSh = ((Boolean) p.getAttribute(language.getPercept(12))).booleanValue();
-			RS = ((Boolean) p.getAttribute(language.getPercept(13))).booleanValue();
-			RW = ((Boolean) p.getAttribute(language.getPercept(14))).booleanValue();
+				RC = ((Boolean) p.getAttribute(language.getPercept(11))).booleanValue();
+				RSh = ((Boolean) p.getAttribute(language.getPercept(12))).booleanValue();
+				RS = ((Boolean) p.getAttribute(language.getPercept(13))).booleanValue();
+				RW = ((Boolean) p.getAttribute(language.getPercept(14))).booleanValue();
 			}
 			
 			//Energy Level

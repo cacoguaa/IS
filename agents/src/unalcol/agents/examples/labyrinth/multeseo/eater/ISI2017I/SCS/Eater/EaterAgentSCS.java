@@ -14,7 +14,6 @@ public class EaterAgentSCS extends AgentSCSEater {
 	private ArrayList<Byte> foods;
 	private ArrayList<Byte> goodFood;
 	private ArrayList<Node> toAdd;
-	private ArrayList<Integer> foodsPos;
 	
 	private int head;
 	private int posX;
@@ -22,7 +21,6 @@ public class EaterAgentSCS extends AgentSCSEater {
 	private int steps;
 	private int maxEL;
 	private int oldEL;
-	private int actualFood;
 	private int limit;
 	private int waitSteps;
 
