@@ -7,6 +7,7 @@ import unalcol.agents.simulate.util.SimpleLanguage;
 
 public class EaterAgentSCS extends AgentSCSEater {
 	
+	public static final int MAXSTEPS = 5;
 	private Stack<Node> nodes;
 	private Stack<Node> parents;
 	
@@ -14,6 +15,10 @@ public class EaterAgentSCS extends AgentSCSEater {
 	private ArrayList<Byte> foods;
 	private ArrayList<Byte> goodFood;
 	private ArrayList<Node> toAdd;
+	
+	boolean[] walls;
+	boolean[] enemy;
+	boolean[] foodChar;
 	
 	private int head;
 	private int posX;
@@ -35,15 +40,43 @@ public class EaterAgentSCS extends AgentSCSEater {
 
 	public EaterAgentSCS(SimpleLanguage _lenguage) {
 		super(_lenguage);
-		// initialize all
-		initialize();
 		goodFood = new ArrayList<Byte>(16);
-		waitSteps = 3;
+		walls = new boolean[4];
+		enemy = new boolean[4];
+		foodChar = new boolean[4];
+		waitSteps = MAXSTEPS;
 		maxEL = 0;
 		eatStep = -2;
 		start = true;
+		// initialize all
+		initialize();
 	};
-
+	
+	//Initialize
+	public void initialize() {
+		if( !start ){
+			nodes.clear();
+			parents.clear();
+			states.clear();
+			toAdd.clear();
+		}
+		nodes = new Stack<>();
+		parents = new Stack<>();
+		states = new ArrayList<>();
+		toAdd = new ArrayList<>();
+		foods = new ArrayList<>();
+		steps = 0;
+		head = 0;
+		posX = 0;
+		posY = 0;
+		change = false;
+		// Create root node
+		Node root = new Node(posX, posY, null, 0);
+		old = root;
+		nodes.add(root);
+		states.add(0);
+	}
+	
 	@Override
 	public int accion(
 			boolean PF, boolean PD, boolean PA, boolean PI, // Moves
@@ -66,8 +99,8 @@ public class EaterAgentSCS extends AgentSCSEater {
 		//Resource Found
 		if( RE ){
 			//Food Chars
-			boolean[] foodChar = new boolean[] { RC, RSh, RS, RW };
-			idFood = generateIdFood(foodChar);
+			readBooleans(foodChar, RC, RSh, RS, RW );
+			idFood = generateIdFood();
 			//Find First Good Food
 			if( goodFood.isEmpty() || eatStep < 1){
 				switch( eatStep ){
@@ -83,7 +116,6 @@ public class EaterAgentSCS extends AgentSCSEater {
 						if(maxEL < EL){
 							maxEL = EL;
 							limit = EL/3;
-							System.out.println(limit);
 						}
 						eatStep = 0;
 						return -1;
@@ -120,13 +152,21 @@ public class EaterAgentSCS extends AgentSCSEater {
 		oldEL = EL;
 		//Check If Agent's Energy Is Enough
 		e =  haveEnergy(EL);
-		//Normal Move Without Other Agent Near And Enough Energy
-		if( !AF && !AD && !AA && !AI && e){
+		
+		//Enemy Agent Detected
+		if( AF || AD || AA || AI ){
+			readBooleans(enemy,AF,AD,AA,AI);
+			return reactToAgent();
+		}
+		
+		//Normal Move With Enough Energy
+		else if( e ){
+			readBooleans( walls, PF, PD, PA, PI );
+			waitSteps = MAXSTEPS;
 			//Have Nodes To Visit
 			if (!nodes.isEmpty()) {
-				boolean[] walls = new boolean[] { PF, PD, PA, PI };
 				Node actual = nodes.peek();
-				return normalMove( actual, walls);
+				return normalMove( actual );
 			} else {
 				//initialize();		//TODO Do the search again
 				return -1;
@@ -134,17 +174,14 @@ public class EaterAgentSCS extends AgentSCSEater {
 		} else if(!e && !goodFood.isEmpty()){
 			// TODO Eater Low Energy
 			return moveToFood();
-		} else if(goodFood.isEmpty()){
-			// TODO Find Good Food
+		} else {
+			// TODO Find Good Food (Empty Good Food)
 			return 0;
-		} else{
-			// TODO Agent detected
-			return reactToAgent();
 		}
 	}
-
+	
 	//Generate An Unique Id To Specific Food
-	public byte generateIdFood(boolean[] foodChar){
+	public byte generateIdFood(){
 		byte idFood = 0;
 		for(int i = 0; i < foodChar.length; i++){
 			if(foodChar[i]){
@@ -166,20 +203,31 @@ public class EaterAgentSCS extends AgentSCSEater {
 	
 	//Find Path To Good Food
 	public int moveToFood(){
+		waitSteps = MAXSTEPS;
 		System.out.println("low energy"); //TODO
 		return -1;
 	}
 	
 	//React To A Near Opponent Agent
 	public int reactToAgent(){
-		if( waitSteps > 0){
+		//Enough Energy To Wait And Remind Wait Steps
+		if(e && waitSteps > 0){
+			System.out.println("Arrancar en: " + waitSteps + "...");
 			waitSteps--;
-			return -1;
+			return -1;		
 		}
 		else{
+			waitSteps = MAXSTEPS;
 			//TODO Find other path
-			return -1;
+			System.out.println("actual - posX" + posX + " posY " + posY);
+			System.out.println("next - posX" + nodes.peek().pos[0] + " posY " + nodes.peek().pos[1]);
+			return moveRandomFree();
 		}
+	}
+	
+	// Move To a Empty Space
+	public int moveRandomFree(){
+		return -1;
 	}
 	
 	//Check If There Are Enough Energy
@@ -191,9 +239,9 @@ public class EaterAgentSCS extends AgentSCSEater {
 	}
 	
 	//Normal Move
-	private int normalMove(Node actual, boolean[] walls) {
+	private int normalMove(Node actual) {
 		// A Near Path Exist
-		if (canMove(actual, walls)) {
+		if (canMove(actual)) {
 			//If Return On a Path
 			if (change) {
 				int movX = -1, movY = -1;
@@ -207,7 +255,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 			posX = actual.pos[0];
 			posY = actual.pos[1];
 			//Verify And Create Childs
-			if (createChildren(walls, actual)) {
+			if (createChildren(actual)) {
 				parents.add(actual);
 				int movX = -1, movY = -1;
 				
@@ -223,7 +271,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 	}
 	
 	//Check If The Node Have Childs
-	public boolean canMove(Node actual, boolean[] walls) {
+	public boolean canMove(Node actual) {
 		if (steps > 0) {
 			boolean can = false;
 			can = (Math.abs(posX - actual.pos[0]) + Math.abs(posY - actual.pos[1])) < 2;
@@ -410,7 +458,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 	}
 
 	//Create All Node's Childs
-	public boolean createChildren(boolean[] walls, Node actual) {
+	public boolean createChildren( Node actual) {
 		int nChilds = 0;
 		boolean success = false;
 		toAdd = new ArrayList<>();
@@ -490,23 +538,13 @@ public class EaterAgentSCS extends AgentSCSEater {
 		return success;
 	}
 
-	//Initialize
-	public void initialize() {
-		nodes = new Stack<>();
-		parents = new Stack<>();
-		states = new ArrayList<>();
-		toAdd = new ArrayList<>();
-		foods = new ArrayList<>();
-		steps = 0;
-		head = 0;
-		posX = 0;
-		posY = 0;
-		change = false;
-		// Create root node
-		Node root = new Node(posX, posY, null, 0);
-		old = root;
-		nodes.add(root);
-		states.add(0);
+	//Update A Array Of Booleans Of Size 4
+	public void readBooleans(boolean[] update, boolean B0, boolean B1, boolean B2, boolean B3 ){
+		update[0] = B0;
+		update[1] = B1;
+		update[2] = B2;
+		update[3] = B3;
 	}
+
 
 }
