@@ -15,10 +15,11 @@ public class EaterAgentSCS extends AgentSCSEater {
 	private ArrayList<Byte> foods;
 	private ArrayList<Byte> goodFood;
 	private ArrayList<Node> toAdd;
+	private ArrayList<Byte> moveRandom;
 	
 	boolean[] walls;
 	boolean[] enemy;
-	boolean[] foodChar;
+	boolean[] foodChar;	
 	
 	private int head;
 	private int posX;
@@ -44,6 +45,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		walls = new boolean[4];
 		enemy = new boolean[4];
 		foodChar = new boolean[4];
+		moveRandom = new ArrayList<Byte>(4);
 		waitSteps = MAXSTEPS;
 		maxEL = 0;
 		eatStep = -2;
@@ -152,6 +154,8 @@ public class EaterAgentSCS extends AgentSCSEater {
 		oldEL = EL;
 		//Check If Agent's Energy Is Enough
 		e =  haveEnergy(EL);
+		//Update Walls
+		readBooleans( walls, PF, PD, PA, PI );
 		
 		//Enemy Agent Detected
 		if( AF || AD || AA || AI ){
@@ -161,7 +165,6 @@ public class EaterAgentSCS extends AgentSCSEater {
 		
 		//Normal Move With Enough Energy
 		else if( e ){
-			readBooleans( walls, PF, PD, PA, PI );
 			waitSteps = MAXSTEPS;
 			//Have Nodes To Visit
 			if (!nodes.isEmpty()) {
@@ -227,7 +230,32 @@ public class EaterAgentSCS extends AgentSCSEater {
 	
 	// Move To a Empty Space
 	public int moveRandomFree(){
-		return -1;
+		int cnt = 0;
+		int r = -1;
+		for( byte i = 0; i < enemy.length; i++){
+			if( !walls[i] && !enemy[i] && moveRandom.indexOf(i) == -1){
+				moveRandom.add(i);
+				cnt++;
+			}
+		}
+		if(cnt > 0){
+			r = (int)(Math.random()*cnt);
+			r = moveRandom.get(r);
+			moveRandom.clear();
+			return -1;
+		} else {
+			return -1;
+		}
+
+	}
+	
+	//Print Array's Elements
+	public void printBooleans(boolean[] print){
+		int l = print.length;
+		for(int i = 0; i < l; i++){
+			System.out.print( print[i] + " " );
+		}
+		System.out.println();
 	}
 	
 	//Check If There Are Enough Energy
