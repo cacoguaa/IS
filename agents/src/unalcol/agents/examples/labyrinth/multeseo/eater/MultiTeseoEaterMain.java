@@ -4,7 +4,6 @@ import unalcol.agents.Agent;
 import unalcol.agents.AgentProgram;
 import unalcol.agents.examples.labyrinth.Labyrinth;
 import unalcol.agents.examples.labyrinth.LabyrinthDrawer;
-import unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Eater.EaterAgentSCS;
 import unalcol.agents.examples.labyrinth.teseo.simple.RandomReflexTeseo;
 import unalcol.agents.simulate.util.SimpleLanguage;
 import unalcol.types.collection.vector.Vector;
@@ -12,7 +11,7 @@ import unalcol.types.collection.vector.Vector;
 public class MultiTeseoEaterMain {
     private static SimpleLanguage getLanguage(){
 	    return  new SimpleLanguage( new String[]{"front", "right", "back", "left", "treasure", "fail",
-	        "afront", "aright", "aback", "aleft", "resource", "resource-color", "resource-shape", "resource-size", "resource-weight","energy_level"},
+	        "afront", "aright", "aback", "aleft", "resource", "resource-color", "resource-shape", "resource-size", "resource-weight"},
 	                                   new String[]{"no_op", "die", "advance", "rotate", "eat"}
 	                                   );
 	  }
@@ -21,7 +20,7 @@ public class MultiTeseoEaterMain {
 	     AgentProgram[] teseo = new AgentProgram[12];
 	    int index1 = 0;
 	    int index2 = 1;
-	    teseo[index1] = new EaterAgentSCS( getLanguage() );
+	    teseo[index1] = new RandomReflexTeseo( getLanguage() );
 	    teseo[index2] = new RandomReflexTeseo( getLanguage() );
 	    
 	    LabyrinthDrawer.DRAW_AREA_SIZE = 600;
