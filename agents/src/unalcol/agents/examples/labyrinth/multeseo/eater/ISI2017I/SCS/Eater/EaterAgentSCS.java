@@ -145,7 +145,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 				}
 			}
 			//Find Good Food And Restore Heal
-			else if( goodFood.indexOf(idFood) != -1 && EL < (2*limit)){
+			else if( goodFood.indexOf(idFood) != -1 && EL < (3*limit)){
 				return 4;
 			}
 		}
@@ -154,6 +154,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		oldEL = EL;
 		//Check If Agent's Energy Is Enough
 		e =  haveEnergy(EL);
+		e = true; //TODO
 		//Update Walls
 		readBooleans( walls, PF, PD, PA, PI );
 		
@@ -164,7 +165,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 		}
 		
 		//Normal Move With Enough Energy
-		else if( e ){
+		else if(e ){
 			waitSteps = MAXSTEPS;
 			//Have Nodes To Visit
 			if (!nodes.isEmpty()) {
