@@ -6,6 +6,8 @@ import unalcol.agents.examples.labyrinth.Labyrinth;
 import unalcol.agents.examples.labyrinth.LabyrinthDrawer;
 import unalcol.agents.examples.labyrinth.multeseo.eater.MultiTeseoEaterMainFrame;
 import unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Eater.EaterAgentSCS;
+import unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Eater.EaterAgentSCSV3;
+import unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Eater.EaterAgentSCSV2;
 import unalcol.agents.simulate.util.SimpleLanguage;
 import unalcol.types.collection.vector.Vector;
 
@@ -27,7 +29,7 @@ public class AgentTestMain {
 	    teseo[index2] = new AgentTest( getLanguage() );
 	    */
 	    teseo[index1] = new EaterAgentSCS( getLanguage() );
-	    teseo[index2] = new EaterAgentSCS( getLanguage() );
+	    teseo[index2] = new EaterAgentSCSV3( getLanguage() );
 	    
 	    LabyrinthDrawer.DRAW_AREA_SIZE = 600;
 	    LabyrinthDrawer.CELL_SIZE = 40;
