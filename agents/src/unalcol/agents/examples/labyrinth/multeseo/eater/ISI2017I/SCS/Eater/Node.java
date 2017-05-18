@@ -17,6 +17,7 @@ public class Node {
 		pos[0] = x; pos[1] = y;
 		childs = new ArrayList<Node>();
 		this.depth = (short)depth;
+		state = 0;
 	}
 
 	public Node getParent() {

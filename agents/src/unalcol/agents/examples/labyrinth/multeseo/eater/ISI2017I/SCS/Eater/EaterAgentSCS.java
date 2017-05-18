@@ -117,7 +117,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 						oldEL = EL;
 						if(maxEL < EL){
 							maxEL = EL;
-							limit = EL/3;
+							limit = EL/2;
 						}
 						eatStep = 0;
 						return -1;
@@ -145,7 +145,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 				}
 			}
 			//Find Good Food And Restore Heal
-			else if( goodFood.indexOf(idFood) != -1 && EL < (3*limit)){
+			else if( goodFood.indexOf(idFood) != -1 && EL < (limit)){
 				return 4;
 			}
 		}
@@ -199,7 +199,7 @@ public class EaterAgentSCS extends AgentSCSEater {
 	public boolean fMaxEnergy(int EL){
 		if( EL > maxEL){
 			maxEL = EL;
-			limit = EL/3;
+			limit = EL;
 			return false;
 		}
 		else return true;

@@ -120,7 +120,7 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 		//Read initial energy level
 		if(start){
 			maxEL = EL;
-			limit = EL/3;
+			limit = maxEL/3;
 			start = false;
 		}		
 		//Resource Found
@@ -170,7 +170,7 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 				}
 			}
 			//Find Good Food And Restore Heal
-			else if( goodFood.indexOf(idFood) != -1 && EL < (3*limit)){
+			else if( goodFood.indexOf(idFood) != -1 && EL < (maxEL)){
 				return 4;
 			}
 		}
@@ -260,7 +260,7 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 	public boolean fMaxEnergy(int EL){
 		if( EL > maxEL){
 			maxEL = EL;
-			limit = EL/3;
+			limit = maxEL/3;
 			return false;
 		}
 		else return true;
@@ -667,10 +667,13 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 		// Verify if the position isn't visited yet
 		if (states.indexOf(state) == -1 && !IsDiverting) {
 			Node child = new Node(newX, newY, node, node.depth + 1);
+			child.state = state;
 			toAdd.add(child);
 			states.add(state);
 			node.childs.add(child);
 			success = 1;
+		} else if(states.indexOf(state) != -1 && nodeInQueue(nodes, state, node)){
+			System.out.println("true");
 		}
 
 		return success;
@@ -682,6 +685,27 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 		update[1] = B1;
 		update[2] = B2;
 		update[3] = B3;
+	}
+	
+	//Find A Node In A Queue
+	public boolean nodeInQueue(Stack<Node> nodeList, int state, Node parent){
+		int c = nodeList.size()-1;
+		boolean found = false;
+		Node f = null;
+		while(c >= 0 && !found){
+			if(nodeList.get(c).state == state && state > 0){
+				System.out.println(state);
+				f = nodeList.get(c);
+				found =  true;
+			}
+			c--;
+		}
+		if(found){
+			parent.childs.add(f);
+			nodeList.remove(f);
+			nodeList.add(f);
+		}
+		return found;
 	}
 
 
