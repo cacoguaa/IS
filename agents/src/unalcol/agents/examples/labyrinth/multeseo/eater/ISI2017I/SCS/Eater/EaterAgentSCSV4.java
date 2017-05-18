@@ -8,7 +8,7 @@ import java.util.Stack;
 import unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Eater.AgentSCSEater;
 import unalcol.agents.simulate.util.SimpleLanguage;
 
-public class EaterAgentSCSV3 extends AgentSCSEater {
+public class EaterAgentSCSV4 extends AgentSCSEater {
 	
 	public static final int MAXSTEPS = 2;
 	public static final int MAXDEVIATE = 2;
@@ -43,6 +43,7 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 	private byte idFood;
 	private byte eatStep;
 	
+	private boolean jump;
 	private boolean change;
 	private boolean start;
 	private boolean e;
@@ -52,7 +53,7 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 	Node old;
 	Node oldDeviate;
 
-	public EaterAgentSCSV3(SimpleLanguage _lenguage) {
+	public EaterAgentSCSV4(SimpleLanguage _lenguage) {
 		super(_lenguage);
 		goodFood = new ArrayList<Byte>(16);
 		walls = new boolean[4];
@@ -122,58 +123,69 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 			maxEL = EL;
 			limit = maxEL;
 			start = false;
+			jump = false;
 		}		
 		//Resource Found
-		if( RE ){
+		if( RE ) {
 			//Food Chars
 			readBooleans(foodChar, RC, RSh, RS, RW );
 			idFood = generateIdFood();
-			//Find First Good Food
-			if( goodFood.isEmpty() || eatStep < 1){
-				switch( eatStep ){
-				case -2:
-					foods.add(idFood);
-					oldEL = EL;
-					eatStep = -1;
-					return 4;
-				case -1:
-					if( EL > oldEL){
-						goodFood.add(idFood);
+			
+			if(!jump || goodFood.indexOf(idFood) != -1){
+				//Find First Good Food
+				if( goodFood.isEmpty() || eatStep < 1){
+					switch( eatStep ){
+					case -2:
+						foods.add(idFood);
 						oldEL = EL;
-						fMaxEnergy(EL);
-						/*if(maxEL < EL){
-							maxEL = EL;
-							limit = EL/3;
-						}*/
-						eatStep = 0;
-						return -1;
+						eatStep = -1;
+						return 4;
+					case -1:
+						if( EL > oldEL){
+							goodFood.add(idFood);
+							oldEL = EL;
+							fMaxEnergy(EL);
+							/*if(maxEL < EL){
+								maxEL = EL;
+								limit = EL/3;
+							}*/
+							eatStep = 0;
+							return -1;
+						}
+						else{
+							jump = true;
+							eatStep = -2;
+						}
+						break;
+					case 0:
+						if(fMaxEnergy(EL)) eatStep = 1;
+						else return 4;
+						break;
 					}
-					else eatStep = -2;
-					break;
-				case 0:
-					if(fMaxEnergy(EL)) eatStep = 1;
-					else return 4;
-					break;
 				}
-			}
-			//Taste New Food
-			if(foods.indexOf(idFood) == -1 || eatStep == 2){
-				switch( eatStep ){
-				case 1:
-					foods.add(idFood);
-					eatStep = 2;
-					oldEL = EL;
+				
+				//Taste New Food
+				if(foods.indexOf(idFood) == -1 || eatStep == 2){
+					switch( eatStep ){
+					case 1:
+						foods.add(idFood);
+						eatStep = 2;
+						oldEL = EL;
+						return 4;
+					case 2:
+						if( EL >= oldEL)goodFood.add(idFood);
+						else jump = true;
+						//eatStep = 1;
+						eatStep = 0;
+						break;
+					}
+				}
+				//Find Good Food And Restore Heal
+				else if( goodFood.indexOf(idFood) != -1 && EL < (maxEL)){
+					jump = false;
 					return 4;
-				case 2:
-					if( EL > oldEL)goodFood.add(idFood);
-					eatStep = 0;
-					break;
 				}
-			}
-			//Find Good Food And Restore Heal
-			else if( goodFood.indexOf(idFood) != -1 && EL < (maxEL)){
-				return 4;
-			}
+			} else jump = false;
 		}
 		
 		//Update ActualEnergy
@@ -673,7 +685,11 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 			states.add(state);
 			node.childs.add(child);
 			success = 1;
-		}
+		}/*
+		else if( states.indexOf(state) != -1 && nodeInQueue(nodes, state, node) ){
+			System.out.println("true");
+		}*/
+
 		return success;
 	}
 
@@ -685,5 +701,25 @@ public class EaterAgentSCSV3 extends AgentSCSEater {
 		update[3] = B3;
 	}
 	
+	//Find A Node In A Queue
+	public boolean nodeInQueue(Stack<Node> nodeList, int state, Node parent){
+		int c = nodeList.size()-1;
+		boolean found = false;
+		Node f = null;
+		while(c >= 0 && !found){
+			if(nodeList.get(c).state == state && state > 0){
+				System.out.println(state);
+				f = nodeList.get(c);
+				found =  true;
+			} else c--;
+		}
+		if(found){
+			parent.childs.add(nodes.get(c));
+			Node A = nodes.remove(c);
+			nodes.add(A);
+		}
+		return found;
+	}
+
 
 }
