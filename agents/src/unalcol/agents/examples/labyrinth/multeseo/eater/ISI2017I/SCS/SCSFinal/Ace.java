@@ -271,6 +271,7 @@ public class Ace extends AgentSCSFinal{
 		} else if(brothers(state)){
 			//TODO
 			graph.addEdge(node, graph.getNode(state));
+			graph.addEdge( graph.getNode(state),node);
 		}
 		return success;
 	}
