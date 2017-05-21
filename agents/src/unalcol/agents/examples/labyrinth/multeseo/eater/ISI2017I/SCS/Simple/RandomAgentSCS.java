@@ -14,6 +14,7 @@ public class RandomAgentSCS extends SimpleTeseoAgentProgram {
 		if (MT)
 			return -1;
 		int f;
+		return -1;/*
 		int k = 0;
 		if( PF && PD && PA && PI){ //Encerrado
 			k = -1;
@@ -71,6 +72,6 @@ public class RandomAgentSCS extends SimpleTeseoAgentProgram {
 			k = -1;
 		} 
 		return k;
+		*/
 	}
-
 }
