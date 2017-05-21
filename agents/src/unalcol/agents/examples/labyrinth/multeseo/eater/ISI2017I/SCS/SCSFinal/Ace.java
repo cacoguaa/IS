@@ -3,7 +3,6 @@ package unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.SCSFinal;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Eater.Node;
 import unalcol.agents.simulate.util.SimpleLanguage;
 
 public class Ace extends AgentSCSFinal{
@@ -91,7 +90,7 @@ public class Ace extends AgentSCSFinal{
 			updateBooleans(foodChar, RC, RSh, RS, RW );
 			idFood = generateIdFood();
 			//Find First Good Food
-			if( goodFood.isEmpty() || eatStep < 1){
+			if( goodFood.isEmpty() && !foods.contains(idFood) || eatStep < 1){
 				switch( eatStep ){
 				case -2:
 					foods.add(idFood);
@@ -115,21 +114,27 @@ public class Ace extends AgentSCSFinal{
 				}
 			}
 			//Taste New Food
-			if(foods.indexOf(idFood) == -1 || eatStep == 2){
+			if(!foods.contains(idFood) || eatStep == 3){
 				switch( eatStep ){
 				case 1:
-					foods.add(idFood);
 					eatStep = 2;
 					oldEL = EL;
 					return 4;
 				case 2:
 					if( EL > oldEL)goodFood.add(idFood);
-					eatStep = 0;
+					foods.add(idFood);
+					eatStep = 3;
+					break;
+				case 3:
+					if(fMaxEnergy(EL)) eatStep = 1;
+					else return 4;
 					break;
 				}
 			}
+			
 			//Find Good Food And Restore Heal
-			else if( goodFood.indexOf(idFood) != -1 && EL < (limit)){
+			else if( goodFood.contains(idFood) && EL < (limit)){
+				System.out.println("i like it");
 				return 4;
 			}
 		}
@@ -157,7 +162,8 @@ public class Ace extends AgentSCSFinal{
 			old = nodes.pop();
 			posX = actual.getPos()[0];
 			posY = actual.getPos()[1];
-			System.out.println("X: " + posX + " ,Y: " +  posY);
+			//TODO delete
+			//System.out.println("X: " + posX + " ,Y: " +  posY);
 			if(createChildren(actual)){
 				int movX = -1, movY = -1;
 				movX = (nodes.peek().getPos()[0] - posX);
@@ -175,7 +181,8 @@ public class Ace extends AgentSCSFinal{
 		if (steps > 0) {
 			boolean can = false;
 			can = (Math.abs(posX - actual.getPos()[0]) + Math.abs(posY - actual.getPos()[1])) < 2;
-			System.out.println(Math.abs(posX - actual.getPos()[0]) + Math.abs(posY - actual.getPos()[1]));
+			//TODO delete
+			//System.out.println(Math.abs(posX - actual.getPos()[0]) + Math.abs(posY - actual.getPos()[1]));
 			if (can && (!graph.sonOf(old,actual)) && old.getState() != actual.getState())
 				can = false;
 			return can;
@@ -186,21 +193,26 @@ public class Ace extends AgentSCSFinal{
 	//Find A Return Path
 	public int findPath(Nod objetive) {
 			change = true;
-			System.out.println(old + " o: " + objetive);
+			//TODO delete
+			//System.out.println(old + " o: " + objetive);
 			if(rst.isEmpty() && !test){
-				System.out.println("nodes: " + nodes);
+				//TODO delete
+				//System.out.println("nodes: " + nodes);
 				ArrayList<Nod> temp = graph.findItePath(old, objetive);
-				System.out.println(temp);
+				//TODO delete
+				//System.out.println(temp);
 				for(int x = 1; x < temp.size(); x++) rst.add(temp.get(x));
 				test = true;
 			}
-			System.out.println(rst + " + rst");
+			//TODO delete
+			//System.out.println(rst + " + rst");
 			int k = -1, movX = 0, movY = 0;
 			old = rst.remove(0);
 			movX = old.getPos()[0] - posX;
 			movY = old.getPos()[1] - posY;
 			k = movement(movX, movY);
-			System.out.println(k + " first step");
+			//TODO delete
+			//System.out.println(k + " first step");
 			posX = old.getPos()[0];
 			posY = old.getPos()[1];
 			return k;
@@ -265,20 +277,26 @@ public class Ace extends AgentSCSFinal{
 			Nod child = new Nod(newX, newY, state);
 			toAdd.add(child);
 			states.add(state);
-			graph.addEdge(node, child);
-			graph.addEdge(child, node);
+			//TODO delete
+			//graph.addEdge(node, child);
+			//graph.addEdge(child, node);
+			graph.addLink(node, child);
 			success = 1;
 		} else if(brothers(state)){
 			//TODO
-			//graph.addEdge(node, graph.getNode(state));
-			//graph.addEdge( graph.getNode(state),node);
+			//System.out.println("BROTHERS!!");
+			graph.addLink(node, graph.getNode(state));
+			//graph.print(node);
+			//graph.print(graph.getNode(state));
 		}
 		return success;
 	}
 	
 	public boolean brothers(int state){
 		for(Nod x: nodes){
-			if( x.getState() == state) return true;
+			if( x.getState() == state){
+				return true;
+			}
 		}
 		return false;
 	}
