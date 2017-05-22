@@ -114,7 +114,7 @@ public class Ace extends AgentSCSFinal{
 				}
 			}
 			//Taste New Food
-			if(!foods.contains(idFood) || eatStep == 3){
+			if(!foods.contains(idFood) || eatStep == 2 || eatStep == 3){
 				switch( eatStep ){
 				case 1:
 					eatStep = 2;
@@ -134,7 +134,8 @@ public class Ace extends AgentSCSFinal{
 			
 			//Find Good Food And Restore Heal
 			else if( goodFood.contains(idFood) && EL < (limit)){
-				System.out.println("i like it");
+				//TODO delete
+				//System.out.println("i like it");
 				return 4;
 			}
 		}
@@ -192,7 +193,6 @@ public class Ace extends AgentSCSFinal{
 
 	//Find A Return Path
 	public int findPath(Nod objetive) {
-			change = true;
 			//TODO delete
 			//System.out.println(old + " o: " + objetive);
 			if(rst.isEmpty() && !test){
@@ -200,12 +200,12 @@ public class Ace extends AgentSCSFinal{
 				//System.out.println("nodes: " + nodes);
 				ArrayList<Nod> temp = graph.findItePath(old, objetive);
 				//TODO delete
-				//System.out.println(temp);
+				//System.out.println( "temp " + temp);
 				for(int x = 1; x < temp.size(); x++) rst.add(temp.get(x));
 				test = true;
 			}
 			//TODO delete
-			//System.out.println(rst + " + rst");
+			//System.out.println("rst " + rst );
 			int k = -1, movX = 0, movY = 0;
 			old = rst.remove(0);
 			movX = old.getPos()[0] - posX;
@@ -284,8 +284,9 @@ public class Ace extends AgentSCSFinal{
 			success = 1;
 		} else if(brothers(state)){
 			//TODO
-			//System.out.println("BROTHERS!!");
-			graph.addLink(node, graph.getNode(state));
+			System.out.println("BROTHERS!!");
+			//graph.addLink(node, graph.getNode(state));
+			System.out.println(node.getState());
 			//graph.print(node);
 			//graph.print(graph.getNode(state));
 		}

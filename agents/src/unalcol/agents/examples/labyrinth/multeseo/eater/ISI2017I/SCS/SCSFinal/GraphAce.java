@@ -85,9 +85,6 @@ public class GraphAce{
     	}
     }
     
-
-    
-
     public boolean sonOf(Nod parent, Nod son){
     	boolean s = false;
     	if( graph.containsKey(parent) || graph.containsKey(son)){
@@ -97,7 +94,9 @@ public class GraphAce{
     	}
     	return s;
     }
-    
+
+    /*
+     
     ArrayList<Nod> findItePath(Nod root, Nod desti){
     	limitIte[0] = 0;
     	if(root.getState() == desti.getState()){
@@ -118,7 +117,7 @@ public class GraphAce{
 	    	byte i = 0;
 	    	if(graph.get(root) != null){
 	    		ArrayList<Nod> n = graph.get(root);
-	    		while( !found && i < n.size()){
+	    		while( !found && i < n.size() && !found){
 					dfsi(n.get(i),desti);
 					i++;
 				}
@@ -129,20 +128,22 @@ public class GraphAce{
     	//
     	}
     	return rst;
-    }
-    
+    } 
     
     private boolean dfsi(Nod root,Nod desti) {
+    	System.out.println(root + " " + limitIte[1]);
     	visited.add(root.getState());
 		rst.add(root);
     	if(root.getState() == desti.getState()){
-    		return found = true;
+    		found = true;
+    		System.out.println(found);
+    		return true;
     	}
-    	if(graph.get(root) != null && limitIte[1] < limitIte[0]){
+    	if(!found && graph.get(root) != null && limitIte[1] < limitIte[0]){
     		limitIte[1]++;
     		ArrayList<Nod> n = graph.get(root);
     		byte i = 0;
-    		while( !found && i < n.size()){
+    		while( i < n.size()){
 				if(visited.indexOf(n.get(i).getState()) ==-1){
 					dfsi(n.get(i),desti);
 				}
@@ -161,19 +162,64 @@ public class GraphAce{
     	return false;
 	}
 
-    /*
-    private boolean dfsi(Nod root) {
-    	System.out.println(root);
-    	visited.add(root.getState());
-    	if(graph.get(root) != null){
-    		for(Nod n: graph.get(root)){
-				if(visited.indexOf(n.getState()) ==-1){
-					dfsi(n);
+    */
+    ArrayList<Nod> findItePath(Nod root, Nod desti){
+    	if(root.getState() == desti.getState())return null;
+    	limitIte[0] = 0;
+    	found = false;
+    	rst.clear();
+    	while( limitIte[0] < length && !found){
+    		limitIte[0]++;
+    		limitIte[1] = 0;
+    		visited.clear();
+    		rst.clear();	
+    		visited.add(root.getState());
+    		rst.add(root);
+    		byte i = 0;
+    		if(graph.get(root) != null){
+    			ArrayList<Nod> n = graph.get(root);
+	    		while(i < n.size() && !found){
+	    			if(!visited.contains(n.get(i).getState())){
+	    				dfsi(n.get(i),desti);
+	    			}
+					i++;
 				}
-			}
+    		}
     	}
-    	return true;
-	}*/
+    	return rst;
+    }
+    
+    private boolean dfsi(Nod current,Nod desti) {
+    	if(current.getState() == desti.getState()) {
+    		rst.add(current);
+    		return found = true;
+    	}
+    	else{
+    		visited.add(current.getState());
+    		rst.add(current);
+    		if(graph.get(current) != null && limitIte[1] < limitIte[0]){
+    			ArrayList<Nod> n = graph.get(current);
+    			byte i = 0;
+    			while(i < n.size() && !found){
+    				limitIte[1]++;
+	    			if(!visited.contains(n.get(i).getState())){
+	    				dfsi(n.get(i),desti);
+	    			}
+					i++;
+				}
+        		byte c = 0;
+        		if(found){
+        			for(Nod x: n){
+        				if(rst.contains(x)) c++;
+        			}
+        		}
+        		if(c == 0)rst.remove(current);
+    		} else {
+        		rst.remove(current);
+        		}
+    		return false;
+    	}
+    }
 
 	public static void main(String[] args){
     	GraphAce ace = new GraphAce();
@@ -189,18 +235,9 @@ public class GraphAce{
     	Nod h = new Nod(0, 0, 8);
     	Nod i = new Nod(0, 0, 9);
     	Nod j = new Nod(0, 0, 10);
-    	/*
-    	ace.addEdge(a, b);
-    	ace.addEdge(a, c);
-    	ace.addEdge(a, d);
-    	ace.addEdge(b, e);
-    	ace.addEdge(b, f);
-    	ace.addEdge(c, g);
-    	ace.addEdge(d, h);
-    	ace.addEdge(d, i);
-    	ace.addEdge(g, j);*/
+    	
     	ace.addLink(a, b);
-    	ace.addLink(a, c);
+    	ace.addLink(d, j);
     	ace.addLink(a, d);
     	ace.addLink(b, e);
     	ace.addLink(b, f);
@@ -208,8 +245,10 @@ public class GraphAce{
     	ace.addLink(d, h);
     	ace.addLink(d, i);
     	ace.addLink(g, j);
-    	//System.out.println(ace.sonOf(a, b));
-    	//System.out.println( ace.findItePath(j, a) );
+    	ace.addLink(a, c);
+    	System.out.println(ace.sonOf(a, b));
+    	ace.print(a);
+    	System.out.println( ace.findItePath(a, j) );
     }
 
 	public Nod getNode(int state) {
