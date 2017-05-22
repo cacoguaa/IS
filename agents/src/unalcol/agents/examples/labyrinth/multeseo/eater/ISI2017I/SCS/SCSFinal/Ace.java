@@ -133,7 +133,7 @@ public class Ace extends AgentSCSFinal{
 			}
 			
 			//Find Good Food And Restore Heal
-			else if( goodFood.contains(idFood) && EL < (limit)){
+			if( goodFood.contains(idFood) && EL < (limit)){
 				//TODO delete
 				//System.out.println("i like it");
 				return 4;
