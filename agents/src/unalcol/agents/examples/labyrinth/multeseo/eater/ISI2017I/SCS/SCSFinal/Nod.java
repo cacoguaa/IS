@@ -1,9 +1,5 @@
 package unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.SCSFinal;
 
-import java.util.ArrayList;
-
-import unalcol.agents.examples.labyrinth.multeseo.eater.ISI2017I.SCS.Eater.Node;
-
 public class Nod {
 	boolean visited;
 	private byte[] pos;
@@ -33,7 +29,7 @@ public class Nod {
 		pos[1] = (byte) y;
 		this.state = state;
 		parent = null;
-		state = 0;
+
 	}
 	
 	public void setParent(Nod parent){

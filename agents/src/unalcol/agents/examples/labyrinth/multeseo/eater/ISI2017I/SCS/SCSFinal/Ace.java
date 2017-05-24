@@ -14,7 +14,6 @@ public class Ace extends AgentSCSFinal{
 	private boolean[] foodChar;	
 	
 	private Stack<Nod> nodes;
-	private Stack<Nod> nodesTemp;
 	private ArrayList<Nod> toAdd;
 	private ArrayList<Nod> rst;
 	private ArrayList<Integer> states;
@@ -58,7 +57,6 @@ public class Ace extends AgentSCSFinal{
 	void initialize(){
 		graph = new GraphAce();
 		nodes = new Stack<Nod>();
-		nodesTemp = new Stack<Nod>();
 		states = new ArrayList<>();
 		toAdd = new ArrayList<>();
 		steps = 0;
@@ -67,7 +65,6 @@ public class Ace extends AgentSCSFinal{
 		posY = 0;
 		waitStep = 2;
 		Nod root = new Nod(posX, posY, 0);
-		//graph.addEdge(root, null);
 		old = root;
 		nodes.add(root);
 		states.add(0);
@@ -82,13 +79,14 @@ public class Ace extends AgentSCSFinal{
 			graph.clear();
 			return -1;
 		}
-		//System.out.println("posX" + posX + " Posy: " + posY);
+		
 		//Read initial energy level
 		if(start){
 			maxEL = EL;
 			limit = maxEL;
 			start = false;
 		}	
+		
 		//Resource Found
 		if( RE ){
 			//Food Chars
@@ -139,12 +137,11 @@ public class Ace extends AgentSCSFinal{
 			
 			//Find Good Food And Restore Heal
 			if( goodFood.contains(idFood) && EL < (limit)){
-				//TODO delete
-				//System.out.println("i like it");
 				return 4;
 			}
 		}
 		
+		//Enemy Agent Detected
 		if(AF|AD|AA|AI){
 			updateBooleans(enemy,AF,AD,AA,AI);
 			if(waitStep > 0){
@@ -153,10 +150,13 @@ public class Ace extends AgentSCSFinal{
 			}
 			return -1;
 		}
+		
 		//Update ActualEnergy
 		oldEL = EL;
+		
 		//Update walls
 		updateBooleans(walls,PF,PD,PA,PI);
+		
 		//Normal move
 		if (!nodes.isEmpty()) {
 			if(!change) actual  = nodes.peek();
@@ -177,8 +177,7 @@ public class Ace extends AgentSCSFinal{
 			old = nodes.pop();
 			posX = actual.getPos()[0];
 			posY = actual.getPos()[1];
-			//TODO delete
-			//System.out.println("X: " + posX + " ,Y: " +  posY);
+			//Create Children
 			if(createChildren(actual)){
 				int movX = -1, movY = -1;
 				movX = (nodes.peek().getPos()[0] - posX);
@@ -192,13 +191,11 @@ public class Ace extends AgentSCSFinal{
 		}
 	}
 	
-	//Check If The Node Have Childs
+	//Check If The Node Have Children
 	public boolean canMove(Nod actual) {
 		if (steps > 0) {
 			boolean can = false;
 			can = (Math.abs(posX - actual.getPos()[0]) + Math.abs(posY - actual.getPos()[1])) < 2;
-			//TODO delete
-			//System.out.println(Math.abs(posX - actual.getPos()[0]) + Math.abs(posY - actual.getPos()[1]));
 			if (can && (!graph.sonOf(old,actual)) && old.getState() != actual.getState())
 				can = false;
 			return can;
@@ -208,26 +205,18 @@ public class Ace extends AgentSCSFinal{
 
 	//Find A Return Path
 	public int findPath(Nod objetive) {
-			//TODO delete
-			//System.out.println(old + " o: " + objetive);
-			if(rst.isEmpty() && !test){
-				//TODO delete
-				//System.out.println("nodes: " + nodes);
-				
+
+			if(rst.isEmpty() && !test){				
 				ArrayList<Nod> temp = graph.findItePath(old, objetive);
 				for(int x = 1; x < temp.size(); x++) rst.add(temp.get(x));
 				temp.clear();
 				test = true;
 			}
-			//TODO delete
-			//System.out.println("rst " + rst );
 			int k = -1, movX = 0, movY = 0;
 			old = rst.remove(0);
 			movX = old.getPos()[0] - posX;
 			movY = old.getPos()[1] - posY;
 			k = movement(movX, movY);
-			//TODO delete
-			//System.out.println(k + " first step");
 			posX = old.getPos()[0];
 			posY = old.getPos()[1];
 			return k;
@@ -270,7 +259,6 @@ public class Ace extends AgentSCSFinal{
 			newX = -1;
 			break;
 		}
-
 		newX += posX;
 		newY += posY;
 
@@ -287,26 +275,18 @@ public class Ace extends AgentSCSFinal{
 			state += 1;
 			state += (-newY) * 10;
 		}
+		
 		// Verify if the position isn't visited yet
 		if (!states.contains(state)) {
 			Nod child = new Nod(newX, newY, state);
 			toAdd.add(child);
 			states.add(state);
-			//TODO delete
-			//graph.addEdge(node, child);
-			//graph.addEdge(child, node);
+
 			graph.addLink(node, child);
 			success = 1;
 		} else if(brothers(state)){
-			//TODO
-			//System.out.println("BROTHERS!!");
-			//System.out.println(nodes + " Before");
 			toAdd.add(removeNod(nodes,state));
-			//System.out.println(nodes + " after");
 			graph.addLink(node, graph.getNode(state));
-			//System.out.println(node.getState());
-			//graph.print(node);
-			//graph.print(graph.getNode(state));
 			success = 1;
 		}
 		return success;
@@ -449,7 +429,7 @@ public class Ace extends AgentSCSFinal{
 		oldEL = EL;
 		if( oldEL > maxEL){
 			maxEL = oldEL;
-			limit = maxEL; //TODO
+			limit = maxEL;
 			return false;
 		}
 		else return true;

@@ -30,7 +30,7 @@ public class AgentTestMain {
 	    teseo[index2] = new AgentTest( getLange() );
 	    */
 	    teseo[index1] = new AceV2( getLanguage() );
-	    teseo[index2] = new Ace( getLanguage() );
+	    teseo[index2] = new RandomAgentSCS( getLanguage() );
 	    
 	    LabyrinthDrawer.DRAW_AREA_SIZE = 600;
 	    LabyrinthDrawer.CELL_SIZE = 40;
