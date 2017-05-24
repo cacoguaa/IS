@@ -30,6 +30,17 @@ public class GraphAce{
     	length = 0;
     }
     
+
+    public ArrayList<Nod> returnParents(Nod son){
+    	rst.clear();
+    	Nod actual = son;
+    	while( actual.getParent() != null){
+    		rst.add(actual);
+    		actual = actual.getParent();
+    	}
+    	return rst;
+    }
+    
     void addEdge(Nod parent, Nod son){
     	if(parent.getState() != son.getState()){
 			ArrayList<Nod> sons; 
@@ -60,10 +71,6 @@ public class GraphAce{
     }
     void print(Nod root){
     	System.out.print(root + " -> ");
-    	/*
-    	for(int i = 0; i <graph.get(root).size(); i++){
-    		System.out.print( graph.get(root).get(i) + ", ");
-    	}*/
     	System.out.println(graph.get(root));
     }
     
@@ -189,6 +196,45 @@ public class GraphAce{
     	return rst;
     }
     
+    public ArrayList<Nod> findExpand(Nod root, Nod desti){
+    	if(root.getState() == desti.getState()) return null;
+    	ArrayList<Nod> parents = new ArrayList<>();
+    	Stack<Nod> sons = new Stack<>();
+    	ArrayList<Integer> states = new ArrayList<>();
+    	root.setParent(null);
+    	sons.add(root);
+    	Nod parent = null;
+    	states.add(root.getState());
+    	found = false;
+    	while(!sons.isEmpty() && !found){
+    		parent = sons.pop();
+    		parents = graph.get(parent);
+    		if(parents != null ){
+    			for(Nod x: parents){
+    					if(x.getState() == desti.getState()){
+	    					found = true;
+	    					//System.out.println("Objetito -> posicion x:" + x.getPos()[0]+ "  posicion y:" + x.getPos()[1]);
+	    					x.setParent(parent);
+	    					parent = x;
+	    					//parents = returnParents(x);
+	    					break;
+	    				} else if(states.indexOf(x.getState())== -1){
+	    					x.setParent(parent);
+		    				sons.add(x);
+		    				states.add(x.getState());
+	    				}
+	    				
+    				
+    			}
+    		}
+    	}
+    	rst.clear();
+    	rst = returnParents(parent);
+    	rst.add(root);
+    	return rst;
+    }
+    
+    
     private boolean dfsi(Nod current,Nod desti) {
     	if(current.getState() == desti.getState()) {
     		rst.add(current);
@@ -237,7 +283,7 @@ public class GraphAce{
     	Nod j = new Nod(0, 0, 10);
     	
     	ace.addLink(a, b);
-    	ace.addLink(d, j);
+    	ace.addLink(a, c);
     	ace.addLink(a, d);
     	ace.addLink(b, e);
     	ace.addLink(b, f);
@@ -248,7 +294,7 @@ public class GraphAce{
     	ace.addLink(a, c);
     	System.out.println(ace.sonOf(a, b));
     	ace.print(a);
-    	System.out.println( ace.findItePath(a, j) );
+    	System.out.println( ace.findExpand(a, j) );
     }
 
 	public Nod getNode(int state) {

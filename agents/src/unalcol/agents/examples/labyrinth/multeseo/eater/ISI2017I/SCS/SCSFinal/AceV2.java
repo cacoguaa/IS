@@ -5,7 +5,7 @@ import java.util.Stack;
 
 import unalcol.agents.simulate.util.SimpleLanguage;
 
-public class Ace extends AgentSCSFinal{
+public class AceV2 extends AgentSCSFinal{
 	
 	private GraphAce graph;
 	
@@ -40,7 +40,7 @@ public class Ace extends AgentSCSFinal{
 	Nod actual;
 	Nod old;
 	
-	public Ace(SimpleLanguage _lenguage) {
+	public AceV2(SimpleLanguage _lenguage) {
 		super(_lenguage);
 		maxEL = 0;
 		start = true;
@@ -214,9 +214,14 @@ public class Ace extends AgentSCSFinal{
 				//TODO delete
 				//System.out.println("nodes: " + nodes);
 				
-				ArrayList<Nod> temp = graph.findItePath(old, objetive);
-				for(int x = 1; x < temp.size(); x++) rst.add(temp.get(x));
+				//ArrayList<Nod> temp = graph.findItePath(old, objetive);
+				//for(int x = 1; x < temp.size(); x++) rst.add(temp.get(x));
+
+				ArrayList<Nod> temp = graph.findExpand(old, objetive);
+				//System.out.println( "temp " + temp);
+				for(int x = temp.size()-2; x >= 0; x--) rst.add(temp.get(x));
 				temp.clear();
+				
 				test = true;
 			}
 			//TODO delete

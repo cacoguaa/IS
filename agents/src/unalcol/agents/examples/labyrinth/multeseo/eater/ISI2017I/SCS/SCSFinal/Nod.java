@@ -8,7 +8,7 @@ public class Nod {
 	boolean visited;
 	private byte[] pos;
 	private int state;
-	
+	private Nod parent;
 	public byte[] getPos() {
 		return pos;
 	}
@@ -32,9 +32,18 @@ public class Nod {
 		pos[0] = (byte) x;
 		pos[1] = (byte) y;
 		this.state = state;
+		parent = null;
 		state = 0;
 	}
-
+	
+	public void setParent(Nod parent){
+		this.parent = parent;
+	}
+	
+	public Nod getParent(){
+		return parent;
+	}
+	
 	public boolean isVisited() {
 		return visited;
 	}
