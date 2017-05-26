@@ -125,6 +125,8 @@ public class EaterAgentSCSV4 extends AgentSCSEater {
 			start = false;
 			jump = false;
 		}		
+		System.out.println("posX: " + posX + "posY: "+ posY);
+		System.out.println("nodes: " + nodes);
 		//Resource Found
 		if( RE ) {
 			//Food Chars

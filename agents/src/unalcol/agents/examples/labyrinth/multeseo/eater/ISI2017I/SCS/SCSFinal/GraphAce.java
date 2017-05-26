@@ -47,19 +47,17 @@ public class GraphAce{
         		parents = graph.get(parent);
         		if(parents != null ){
         			for(Nod x: parents){
-        					if(nodes.contains(x)){
-    	    					found = true;
-    	    					x.setParent(parent);
-    	    					parents = returnParents(x);
-    	    					rstLocal = parents.size();
-    	    					break;
-    	    				} else if(states.indexOf(x.getState())== -1){
-    	    					x.setParent(parent);
-    	    					sons.add(x);
-    		    				states.add(x.getState());
-    	    				}
-    	    				
-        				
+    					if(nodes.contains(x)){
+	    					found = true;
+	    					x.setParent(parent);
+	    					parents = returnParents(x);
+	    					rstLocal = parents.size();
+	    					break;
+	    				} else if(states.indexOf(x.getState())== -1){
+	    					x.setParent(parent);
+	    					sons.add(x);
+		    				states.add(x.getState());
+	    				}				
         			}
         		}
         	}
@@ -71,6 +69,42 @@ public class GraphAce{
     
  // Busca en la lista nodes el nodo mas cercano a root
     public Nod findExpandVisit(Nod root, ArrayList<Nod> nodes){
+    	if(root.getState() != nodes.get(0).getState()){
+    		ArrayList<Nod> parents = new ArrayList<>();
+        	ArrayList<Nod> sons = new ArrayList<>();
+        	ArrayList<Integer> states = new ArrayList<>();
+        	Nod rstLocal = null;
+        	root.setParent(null);
+        	sons.add(root);
+        	Nod parent = null;
+        	states.add(root.getState());
+        	found = false;
+        	while(!sons.isEmpty() && !found){
+        		parent = sons.remove(0);
+        		parents = graph.get(parent);
+        		if(parents != null ){
+        			for(Nod x: parents){
+        					if(nodes.contains(x)){
+    	    					found = true;
+    	    					rstLocal = x;
+    	    					break;
+    	    				} else if(states.indexOf(x.getState())== -1){
+    		    				sons.add(x);
+    		    				states.add(x.getState());
+    	    				}
+    	    				
+        				
+        			}
+        		}
+        	}
+        	return rstLocal;	
+    	} else
+    	return null;
+    	
+    }
+
+    // Busca en la lista nodes el nodo mas cercano a root
+    public Nod findExpandFood(Nod root, ArrayList<Nod> nodes){
     	if(root.getState() != nodes.get(0).getState()){
     		ArrayList<Nod> parents = new ArrayList<>();
         	ArrayList<Nod> sons = new ArrayList<>();
@@ -185,27 +219,10 @@ public class GraphAce{
     int getLength(){
     	return length;
     }
+    
     void print(Nod root){
     	System.out.print(root + " -> ");
     	System.out.println(graph.get(root));
-    }
-    
-    void findPath(Nod root, Nod desti){
-    	Stack<Nod> dfs = new Stack<>();
-    	ArrayList<Nod> mark = new ArrayList<>();
-    	boolean found = false;
-    	dfs.add(root);
-    	while(!dfs.isEmpty() && !found){
-    		root = dfs.pop();
-    		if(root == desti) found = true;
-    		if(!mark.contains(root) && !found){
-    			mark.add(root);
-    			if(graph.get(root) !=null)
-    				for(Nod x: graph.get(root)){
-	    				dfs.push(x);
-	    			}
-    		}
-    	}
     }
     
     public boolean sonOf(Nod parent, Nod son){
@@ -313,6 +330,78 @@ public class GraphAce{
 			if( x.getState() == state) return x;
 		}
 		return null;
-	}    
+	}
+	
+	 // Busca en la lista nodes el nodo mas cercano a root
+    public Nod findOtherPath(Nod root, ArrayList<Nod> nodes, int enemyState){
+    	if(root.getState() != nodes.get(0).getState()){
+    		ArrayList<Nod> parents = new ArrayList<>();
+        	ArrayList<Nod> sons = new ArrayList<>();
+        	ArrayList<Integer> states = new ArrayList<>();
+        	Nod rstLocal = null;
+        	root.setParent(null);
+        	sons.add(root);
+        	Nod parent = null;
+        	states.add(root.getState());
+        	states.add(enemyState);
+        	found = false;
+        	while(!sons.isEmpty() && !found){
+        		parent = sons.remove(0);
+        		parents = graph.get(parent);
+        		if(parents != null ){
+        			for(Nod x: parents){
+    					if(nodes.contains(x) && x.getState()!=enemyState){
+	    					found = true;
+	    					rstLocal = x;
+	    					break;
+	    				} else if(states.contains(x.getState())){
+		    				sons.add(x);
+		    				states.add(x.getState());
+	    				}
+        			}
+        		}
+        	}
+        	return rstLocal;	
+    	} else
+    	return null;
+    	
+    }
+
+	public ArrayList<Nod> findOtherPathExpand(Nod root, Nod desti, int enemyState) {
+		if(root.getState() == desti.getState()) return null;
+    	ArrayList<Nod> parents = new ArrayList<>();
+    	ArrayList<Nod> sons = new ArrayList<>();
+    	ArrayList<Integer> states = new ArrayList<>();
+    	root.setParent(null);
+    	sons.add(root);
+    	Nod parent = null;
+    	states.add(root.getState());
+    	states.add(enemyState);
+    	found = false;
+    	while(!sons.isEmpty() && !found){
+    		parent = sons.remove(0);
+    		parents = graph.get(parent);
+    		if(parents != null ){
+    			for(Nod x: parents){
+    					if(x.getState() == desti.getState() && !states.contains(x.getState())){
+	    					found = true;
+	    					x.setParent(parent);
+	    					parents = returnParents(x);
+	    					break;
+	    				} else if(!states.contains(x.getState())){
+	    					x.setParent(parent);
+		    				sons.add(x);
+		    				states.add(x.getState());
+	    				}
+	    				
+    				
+    			}
+    		}
+    	}
+    	parents.add(root);
+    	parents = invest(parents);
+    	return parents;
+	}
+
 }
 

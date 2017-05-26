@@ -6,6 +6,7 @@ import unalcol.agents.simulate.util.SimpleLanguage;
 
 public class AceV2 extends AgentSCSFinal{
 	
+	private static final byte WAITSTEPS = 5;
 	private GraphAce graph;
 	
 	private boolean[] walls;
@@ -35,6 +36,10 @@ public class AceV2 extends AgentSCSFinal{
 	private boolean start;
 	private boolean change;
 	private boolean test;
+	private boolean jump;
+	private boolean agent;
+	private boolean searchingFood;
+	private boolean ee;
 	
 	Nod actual;
 	Nod old;
@@ -64,11 +69,14 @@ public class AceV2 extends AgentSCSFinal{
 		head = 0;
 		posX = 0;
 		posY = 0;
-		waitStep = 2;
+		waitStep = WAITSTEPS;
 		Nod root = new Nod(posX, posY, 0);
 		old = root;
 		nodes.add(root);
 		states.add(0);
+		jump = false;
+		agent = false;
+		searchingFood = false;
 	}
 	
 	@Override
@@ -83,106 +91,186 @@ public class AceV2 extends AgentSCSFinal{
 		//Read initial energy level
 		if(start){
 			maxEL = EL;
-			limit = maxEL;
+			limit = maxEL/3;
 			start = false;
 		}	
-		//Resource Found
-
-		if( RE ){
-			//Food Chars
-			updateBooleans(foodChar, RC, RSh, RS, RW );
-			idFood = generateIdFood();
-			//Find First Good Food
-			if( goodFood.isEmpty() && !foods.contains(idFood) || eatStep < 1){
-				switch( eatStep ){
-				case -2:
-					foods.add(idFood);
-					oldEL = EL;
-					eatStep = -1;
+		
+		//haveEnergy(EL);
+		
+		//if(ee){
+			//Resource Found
+			if( RE ){
+				//Food Chars
+				updateBooleans(foodChar, RC, RSh, RS, RW );
+				idFood = generateIdFood();
+				if(!jump){
+					//Find First Good Food
+					if( goodFood.isEmpty() && !foods.contains(idFood) || eatStep < 1){
+						switch( eatStep ){
+						case -2:
+							foods.add(idFood);
+							oldEL = EL;
+							eatStep = -1;
+							return 4;
+						case -1:
+							if( EL > oldEL){
+								goodFood.add(idFood);
+								nodesGoodFood.add(old);
+								oldEL = EL;
+								fMaxEnergy(EL);
+								eatStep = 0;
+								return -1;
+							}
+							else{
+								if(EL < limit) jump = true;
+								eatStep = -2;
+							}
+							break;
+						case 0:
+							if(fMaxEnergy(EL))eatStep = 1;
+							else return 4;
+							break;
+						}
+					}
+					//Taste New Food
+					if( !foods.contains(idFood) || eatStep == 2 || eatStep == 3 ){
+						switch( eatStep ){
+						case 1:
+							eatStep = 2;
+							oldEL = EL;
+							return 4;
+						case 2:
+							foods.add(idFood);
+							if( EL > oldEL){
+								goodFood.add(idFood);
+								nodesGoodFood.add(old);
+								eatStep = 3;
+							} else {
+								eatStep = 1;
+								if(EL < limit) jump = true;
+							}
+							break;
+						case 3:
+							if(fMaxEnergy(EL)) eatStep = 1;
+							else return 4;
+							break;
+						}
+					}
+				} else{
+					if(!foods.contains(idFood)) jump = false;
+				}
+				//Find Good Food And Restore Heal
+				if( goodFood.contains(idFood) && EL < maxEL){
+					jump = false;
+					searchingFood = false;
 					return 4;
-				case -1:
-					if( EL > oldEL){
-						goodFood.add(idFood);
-						nodesGoodFood.add(old);
-						oldEL = EL;
-						fMaxEnergy(EL);
-						eatStep = 0;
+				}
+				
+			}
+			
+			if(AF|AD|AA|AI){
+				updateBooleans(enemy,AF,AD,AA,AI);
+				byte enemyPos = -1;
+				int enemyState = -1;
+				for(byte x = 0; x < 4;x++){
+					if(enemy[x]){
+						enemyPos = x;
+						break;
+					}
+				}
+				enemyState = generateState(enemyPos);
+				if(enemyState == nodes.get(0).getState() && rst.isEmpty()){
+					if(waitStep > 0){
+						waitStep--;
+						//System.out.println("Run in ... " + waitStep);
 						return -1;
 					}
-					else eatStep = -2;
-					break;
-				case 0:
-					if(fMaxEnergy(EL)) eatStep = 1;
-					else return 4;
-					break;
+					return reactToAgent(enemyState);
+				} 
+			}
+			//Update ActualEnergy
+			oldEL = EL;
+			//Update walls
+			updateBooleans(walls,PF,PD,PA,PI);
+			//Normal move	
+			if (!nodes.isEmpty()) {
+				if(!change && !agent) {
+					//Search For A Near Node
+					if (!canMove(nodes.get(0))){
+						Nod cercano = graph.findExpandVisit(old, nodes);
+						if (cercano != null) {
+							if (nodes.remove(cercano)) nodes.add(0,cercano);
+						}
+						
+					}			
+					actual  = nodes.get(0);
+				} else if(agent){
+					actual  = nodes.get(0);
+				} else{
+					change = false;
 				}
+				return normalMove( actual );
 			}
-			//Taste New Food
-			if(!foods.contains(idFood) || eatStep == 2 || eatStep == 3){
-				switch( eatStep ){
-				case 1:
-					eatStep = 2;
-					oldEL = EL;
-					return 4;
-				case 2:
-					if( EL > oldEL){
-						goodFood.add(idFood);
-						nodesGoodFood.add(old);
-					}
-					foods.add(idFood);
-					eatStep = 3;
-					break;
-				case 3:
-					if(fMaxEnergy(EL)) eatStep = 1;
-					else return 4;
-					break;
-				}
-			}
-			
-			//Find Good Food And Restore Heal
-			if( goodFood.contains(idFood) && EL < (limit)){
-				return 4;
-			}
-		}
-		
-		if(AF|AD|AA|AI){
-			updateBooleans(enemy,AF,AD,AA,AI);
-			if(waitStep > 0){
-				waitStep--;
-				return -1;
-			}
-			
-		}
-		//Update ActualEnergy
-		oldEL = EL;
-		//Update walls
-		updateBooleans(walls,PF,PD,PA,PI);
-		//Normal move	
-		if (!nodes.isEmpty()) {
-			if(!change) {
-				//Search For A Near Node
-				if (!canMove(nodes.get(0))){
-					Nod cercano = graph.findExpandVisit(old, nodes);
-					if (cercano != null) {
-						if (nodes.remove(cercano)) nodes.add(0,cercano);
-					}
-					
-				}			
-				actual  = nodes.get(0);
-			}
-			else{
-				change = false;
-			}
-			return normalMove( actual );
-		}		
+		//}
 		//Nothing to do
 		return -1;
 	}
 	
-	int normalMove(Nod actual){
+	
+	public int reactToAgent(int enemyState){
+		if(rst.isEmpty()){
+			nodes.add(nodes.remove(0));
+			agent = true;
+		} else {
+			//TODO TODO TODO cuando esta en camino de vuelta
+			return -1;
+		}
+		return -1;
+	}
+	
+	public int generateState(int i){
+		int newX = 0;
+		int newY = 0;
+		int newHead = (i + head) % 4;
+		int state = 0;
+		switch (newHead) {
+		case 0:
+			newY = 1;
+			break;
+		case 1:
+			newX = 1;
+			break;
+		case 2:
+			newY = -1;
+			break;
+		case 3:
+			newX = -1;
+			break;
+		}
+
+		newX += posX;
+		newY += posY;
+
+		// build the state
+		if (newX >= 0)
+			state = newX * 10000;
+		else {
+			state = 1000;
+			state += (-newX) * 10000;
+		}
+		if (newY >= 0)
+			state += newY * 10;
+		else {
+			state += 1;
+			state += (-newY) * 10;
+		}
+		return state;
+	}
+
+	public int normalMove(Nod actual){
+		waitStep = WAITSTEPS;
 		// A Near Path Exist
 		if (canMove(actual) && rst.isEmpty()) {
-			rst.removeAll(rst);
 			test = false;
 			old =nodes.remove(0);
 			posX = actual.getPos()[0];
@@ -200,7 +288,7 @@ public class AceV2 extends AgentSCSFinal{
 		}
 	}
 	
-	//Check If The Node Have Childs
+	//Check If The Node Have Children
 	public boolean canMove(Nod actual) {
 		if (steps > 0) {
 			boolean can = false;
@@ -214,21 +302,23 @@ public class AceV2 extends AgentSCSFinal{
 
 	//Find A Return Path
 	public int findPath(Nod objetive) {
-			if(rst.isEmpty() && !test){
-				rst = graph.findExpand(old, objetive);
-				test = true;
-			}
-			int k = -1, movX = 0, movY = 0;
-			old = rst.remove(0);
-			movX = old.getPos()[0] - posX;
-			movY = old.getPos()[1] - posY;
-			k = movement(movX, movY);
-			posX = old.getPos()[0];
-			posY = old.getPos()[1];
-			return k;
+		agent = false;
+		if(rst.isEmpty() && !test){
+			rst = graph.findExpand(old, objetive);
+			test = true;
+		}
+		int k = -1, movX = 0, movY = 0;
+		old = rst.remove(0);
+		movX = old.getPos()[0] - posX;
+		movY = old.getPos()[1] - posY;
+		k = movement(movX, movY);
+		posX = old.getPos()[0];
+		posY = old.getPos()[1];
+		return k;
 	}	
 	
-	boolean createChildren(Nod actual){
+		
+	public boolean createChildren(Nod actual){
 		int nChilds = 0;
 		boolean success = false;
 		toAdd = new ArrayList<>();
@@ -243,7 +333,7 @@ public class AceV2 extends AgentSCSFinal{
 		}
 		return success;
 	}
-	
+
 	//Generate A Node's State
 	public int createState(int i, Nod node, boolean IsDiverting) {
 		int success = 0;
@@ -434,7 +524,7 @@ public class AceV2 extends AgentSCSFinal{
 		oldEL = EL;
 		if( oldEL > maxEL){
 			maxEL = oldEL;
-			limit = maxEL;
+			limit = maxEL/2;
 			return false;
 		}
 		else return true;
